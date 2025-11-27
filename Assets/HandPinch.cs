@@ -21,9 +21,8 @@ public class HandPinch : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        isPinching = rightHand.GetFingerIsPinching(OVRHand.HandFinger.Index);
-        Debug.Log(rightHand.transform.position);
-        if (isPinching )
+
+        if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.3)
         {
             Debug.Log("pinching");
             Vector3 obj_velocity = (lastPosition - rightHand.transform.position) * Time.deltaTime;
