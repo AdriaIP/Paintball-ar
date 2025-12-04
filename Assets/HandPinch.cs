@@ -1,3 +1,4 @@
+using Meta.WitAi;
 using System;
 using UnityEngine;
 
@@ -7,29 +8,68 @@ using UnityEngine;
 public class HandPinch : MonoBehaviour
 {
     public OVRHand rightHand;
-    bool isPinching = false;
+    public GameObject rightHandObject;
+    bool isPinching;
+    bool wasPinching;
     public GameObject ball;
+    public float distance = 0.12f;
     Rigidbody b_Rigidbody;
-    Vector3 lastPosition;
+    private Vector3 previousPosition;
+    public Vector3 velocity;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         b_Rigidbody = ball.GetComponent<Rigidbody>();
+        isPinching = false;
+        previousPosition = rightHandObject.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
 
+        velocity = (rightHandObject.transform.position - previousPosition) / Time.deltaTime;
+        previousPosition = rightHandObject.transform.position;
+
+        Debug.Log(velocity);
         if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.3)
         {
-            Debug.Log("pinching");
-            Vector3 obj_velocity = (lastPosition - rightHand.transform.position) * Time.deltaTime;
-            b_Rigidbody.MovePosition(transform.position);
-            lastPosition = transform.position;
+            isPinching = true;
 
-            b_Rigidbody.linearVelocity = obj_velocity;
+            //if (!wasPinching)
+            //{
+            //    b_Rigidbody.useGravity = false;
+            //    b_Rigidbody.linearVelocity = Vector3.zero;
+            //    b_Rigidbody.MovePosition(rightHandObject.transform.position + rightHandObject.transform.forward * distance);
+
+            //    FixedJoint fixedJoint = ball.AddComponent<FixedJoint>();
+            //    fixedJoint.connectedBody = rightHandObject.GetComponent<Rigidbody>();
+            //}
+
+            //Debug.Log("pinching");
+            //Vector3 obj_velocity = (lastPosition - rightHandObject.transform.position) * Time.deltaTime;
+            if (!wasPinching)
+            {
+                b_Rigidbody.useGravity = false;
+                b_Rigidbody.MovePosition(rightHandObject.transform.position + rightHandObject.transform.forward * distance);
+                b_Rigidbody.linearVelocity = Vector3.zero;
+            }
+
+
+            ball.transform.position = rightHandObject.transform.position+ rightHandObject.transform.forward* distance;
         }
+        else
+        {
+            isPinching = false;
+            if (wasPinching)
+            {
+                
+                b_Rigidbody.linearVelocity = velocity;
+                b_Rigidbody.useGravity = true;
+
+            }
+        }
+        wasPinching = isPinching;
     }
 }
