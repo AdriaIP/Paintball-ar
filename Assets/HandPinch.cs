@@ -33,7 +33,7 @@ public class HandPinch : MonoBehaviour
         previousPosition = rightHandObject.transform.position;
 
         Debug.Log(velocity);
-        if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.3)
+        if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.2)
         {
             isPinching = true;
 
@@ -65,7 +65,7 @@ public class HandPinch : MonoBehaviour
             if (wasPinching)
             {
                 
-                b_Rigidbody.linearVelocity = velocity;
+                b_Rigidbody.linearVelocity = velocity*2;
                 b_Rigidbody.useGravity = true;
 
             }
