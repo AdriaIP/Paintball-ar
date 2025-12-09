@@ -16,6 +16,10 @@ public class HandPinch : MonoBehaviour
     Rigidbody b_Rigidbody;
     private Vector3 previousPosition;
     public Vector3 velocity;
+    public Vector3 velocity2;
+    public Vector3 velocity3;
+    public Vector3 velocity4;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -28,12 +32,14 @@ public class HandPinch : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        velocity4 = velocity3;
+        velocity3 = velocity2;
+        velocity2 = velocity;
         velocity = (rightHandObject.transform.position - previousPosition) / Time.deltaTime;
         previousPosition = rightHandObject.transform.position;
 
         Debug.Log(velocity);
-        if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.2)
+        if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.13)
         {
             isPinching = true;
 
@@ -65,7 +71,7 @@ public class HandPinch : MonoBehaviour
             if (wasPinching)
             {
                 
-                b_Rigidbody.linearVelocity = velocity*2;
+                b_Rigidbody.linearVelocity = (velocity+ velocity2 + velocity3)/ 2;
                 b_Rigidbody.useGravity = true;
 
             }
