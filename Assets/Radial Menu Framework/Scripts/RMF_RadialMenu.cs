@@ -11,66 +11,64 @@ public class RMF_RadialMenu : MonoBehaviour {
 
     [HideInInspector]
     public RectTransform rt;
-    //public RectTransform baseCircleRT;
-    //public Image selectionFollowerImage;
 
-    [Tooltip("Adjusts the radial menu for use with a gamepad or joystick. You might need to edit this script if you're not using the default horizontal and vertical input axes.")]
-    public bool useGamepad = false;
-
-    [Tooltip("Enables OVR hand tracking for menu selection. Uses hand pointing direction and pinch to select.")]
-    public bool useOVRHand = false;
-
-    [Tooltip("Reference to the OVRHand component for hand tracking. Required if useOVRHand is enabled.")]
+    [Header("OVR Hand Settings")]
+    [Tooltip("Reference to the OVRHand component for hand tracking.")]
     public OVRHand ovrHand;
 
-    [Tooltip("Reference to the hand anchor transform (e.g., RightHandAnchor or index finger tip). Used to calculate pointing direction.")]
+    [Tooltip("Reference to the hand anchor transform (e.g., RightHandAnchor). Used to calculate pointing direction for pinch mode.")]
     public Transform handAnchor;
 
-    [Tooltip("The camera used for the radial menu (usually the VR camera/CenterEyeAnchor). Required for OVR hand input.")]
-    public Camera vrCamera;
+    [Tooltip("Reference to the index finger tip transform for poke/touch selection.")]
+    public Transform fingerTip;
 
-    [Tooltip("Pinch strength threshold for OVR hand selection (0-1). Default is 0.7.")]
+    [Tooltip("Pinch strength threshold for hand selection (0-1). Default is 0.7.")]
     [Range(0f, 1f)]
     public float pinchThreshold = 0.7f;
 
-    [Tooltip("With lazy selection, you only have to point your mouse (or joystick) in the direction of an element to select it, rather than be moused over the element entirely.")]
+    [Tooltip("Distance threshold for finger poke selection (in meters).")]
+    public float pokeDistance = 0.05f;
+
+    [Header("Selection Settings")]
+    [Tooltip("Enable pinch-based selection (point hand direction + pinch to select).")]
+    public bool usePinchSelection = true;
+
+    [Tooltip("Enable poke/touch selection (touch element with finger tip to select).")]
+    public bool usePokeSelection = true;
+
+    [Tooltip("With lazy selection, you only have to point in the direction of an element to select it.")]
     public bool useLazySelection = true;
 
-
-    [Tooltip("If set to true, a pointer with a graphic of your choosing will aim in the direction of your mouse. You will need to specify the container for the selection follower.")]
+    [Header("Visual Settings")]
+    [Tooltip("If set to true, a pointer will aim in the direction of your hand.")]
     public bool useSelectionFollower = true;
 
     [Tooltip("If using the selection follower, this must point to the rect transform of the selection follower's container.")]
     public RectTransform selectionFollowerContainer;
 
-    [Tooltip("This is the text object that will display the labels of the radial elements when they are being hovered over. If you don't want a label, leave this blank.")]
+    [Tooltip("This is the text object that will display the labels of the radial elements when hovered.")]
     public Text textLabel;
 
-    [Tooltip("This is the list of radial menu elements. This is order-dependent. The first element in the list will be the first element created, and so on.")]
+    [Header("Menu Elements")]
+    [Tooltip("This is the list of radial menu elements. Order-dependent.")]
     public List<RMF_RadialMenuElement> elements = new List<RMF_RadialMenuElement>();
 
-
-    [Tooltip("Controls the total angle offset for all elements. For example, if set to 45, all elements will be shifted +45 degrees. Good values are generally 45, 90, or 180")]
+    [Tooltip("Controls the total angle offset for all elements. Good values are 0, 45, 90, or 180.")]
     public float globalOffset = 0f;
 
+    [HideInInspector]
+    public float currentAngle = 0f;
 
     [HideInInspector]
-    public float currentAngle = 0f; //Our current angle from the center of the radial menu.
-
-
-    [HideInInspector]
-    public int index = 0; //The current index of the element we're pointing at.
+    public int index = 0;
 
     private int elementCount;
-
-    private float angleOffset; //The base offset. For example, if there are 4 elements, then our offset is 360/4 = 90
-
-    private int previousActiveIndex = 0; //Used to determine which buttons to unhighlight in lazy selection.
-
+    private float angleOffset;
+    private int previousActiveIndex = 0;
     private PointerEventData pointer;
-
-    // OVR Hand tracking state
     private bool wasPinching = false;
+    private float pokeDebounceTime = 0.6f;
+    private float lastPokeTime = 0f;
 
     void Awake() {
 
@@ -84,14 +82,14 @@ public class RMF_RadialMenu : MonoBehaviour {
         if (useSelectionFollower && selectionFollowerContainer == null)
             Debug.LogError("Radial Menu: Selection follower container is unassigned on " + gameObject.name + ", which has the selection follower enabled.");
 
-        if (useOVRHand && ovrHand == null)
-            Debug.LogError("Radial Menu: OVR Hand is enabled but ovrHand is not assigned on " + gameObject.name);
+        if (usePinchSelection && ovrHand == null)
+            Debug.LogError("Radial Menu: Pinch selection is enabled but ovrHand is not assigned on " + gameObject.name);
 
-        if (useOVRHand && handAnchor == null)
-            Debug.LogError("Radial Menu: OVR Hand is enabled but handAnchor is not assigned on " + gameObject.name);
+        if (usePinchSelection && handAnchor == null)
+            Debug.LogError("Radial Menu: Pinch selection is enabled but handAnchor is not assigned on " + gameObject.name);
 
-        if (useOVRHand && vrCamera == null)
-            Debug.LogError("Radial Menu: OVR Hand is enabled but vrCamera is not assigned on " + gameObject.name);
+        if (usePokeSelection && fingerTip == null)
+            Debug.LogError("Radial Menu: Poke selection is enabled but fingerTip is not assigned on " + gameObject.name);
 
         elementCount = elements.Count;
 
@@ -115,24 +113,24 @@ public class RMF_RadialMenu : MonoBehaviour {
 
 
     void Start() {
-
-
-        if (useGamepad) {
-            EventSystem.current.SetSelectedGameObject(gameObject, null); //We'll make this the active object when we start it. Comment this line to set it manually from another script.
-            if (useSelectionFollower && selectionFollowerContainer != null)
-                selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, -globalOffset); //Point the selection follower at the first element.
-        }
-
+        // Initialize selection follower
+        if (useSelectionFollower && selectionFollowerContainer != null)
+            selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, -globalOffset);
     }
 
     // Update is called once per frame
     void Update() {
 
-        float rawAngle = 0f;
         bool isPinching = false;
+        int pokedElementIndex = -1;
 
-        if (useOVRHand && ovrHand != null && handAnchor != null) {
-            // OVR Hand tracking mode - skip legacy input entirely
+        // Check for poke/touch selection first
+        if (usePokeSelection && fingerTip != null) {
+            pokedElementIndex = GetPokedElementIndex();
+        }
+
+        // Handle pinch-based selection (hand direction + pinch)
+        if (usePinchSelection && ovrHand != null && handAnchor != null) {
             float handAngle = GetOVRHandAngle();
             bool validAngle = handAngle >= 0;
             
@@ -140,95 +138,68 @@ public class RMF_RadialMenu : MonoBehaviour {
                 currentAngle = normalizeAngle(handAngle - globalOffset + (angleOffset / 2f));
             }
 
-            // Check for pinch gesture
             isPinching = ovrHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > pinchThreshold;
         }
-        else if (!useOVRHand) {
-            // Legacy input mode - only use when OVR hand is disabled
-            bool joystickMoved = false;
-            
-            try {
-                joystickMoved = Input.GetAxis("Horizontal") != 0.0 || Input.GetAxis("Vertical") != 0.0;
-            } catch {
-                // Input System is active, skip gamepad input
-            }
 
-            if (!useGamepad) {
-                try {
-                    rawAngle = Mathf.Atan2(Input.mousePosition.y - rt.position.y, Input.mousePosition.x - rt.position.x) * Mathf.Rad2Deg;
-                    currentAngle = normalizeAngle(-rawAngle + 90 - globalOffset + (angleOffset / 2f));
-                } catch {
-                    // Input System is active, skip mouse input
-                }
-            }
-            else if (joystickMoved) {
-                try {
-                    rawAngle = Mathf.Atan2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal")) * Mathf.Rad2Deg;
-                    currentAngle = normalizeAngle(-rawAngle + 90 - globalOffset + (angleOffset / 2f));
-                } catch {
-                    // Input System is active, skip gamepad input
-                }
-            }
-        }
-
-        //Handles lazy selection. Checks the current angle, matches it to the index of an element, and then highlights that element.
-        if (angleOffset != 0 && useLazySelection) {
-
-            //Current element index we're pointing at.
+        // Handle lazy selection (highlighting based on hand direction)
+        if (angleOffset != 0 && useLazySelection && usePinchSelection) {
             index = (int)(currentAngle / angleOffset);
+            
+            // Clamp index to valid range
+            if (index >= elementCount) index = elementCount - 1;
+            if (index < 0) index = 0;
 
             if (elements[index] != null) {
-
-                //Select it.
                 selectButton(index);
 
-                //If we click or press a "submit" button (Button on joystick, enter, or spacebar), then we'll execute the OnClick() function for the button.
-                if (useOVRHand) {
-                    // For OVR hand: trigger on pinch release (like the RayGun behavior)
-                    if (wasPinching && !isPinching) {
-                        ExecuteEvents.Execute(elements[index].button.gameObject, pointer, ExecuteEvents.submitHandler);
-                    }
-                    wasPinching = isPinching;
+                // Pinch to confirm selection
+                if (wasPinching && !isPinching) {
+                    ExecuteEvents.Execute(elements[index].button.gameObject, pointer, ExecuteEvents.submitHandler);
                 }
-                else if (!useOVRHand) {
-                    try {
-                        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Submit")) {
-                            ExecuteEvents.Execute(elements[index].button.gameObject, pointer, ExecuteEvents.submitHandler);
-                        }
-                    } catch {
-                        // Input System is active, skip legacy input
-                    }
-                }
+                wasPinching = isPinching;
             }
-
         }
 
-        //Updates the selection follower if we're using one.
-        if (useSelectionFollower && selectionFollowerContainer != null) {
-            if (useOVRHand) {
-                float handAngle = GetOVRHandAngle();
-                if (handAngle >= 0) {
-                    selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, -handAngle + 90);
-                }
+        // Handle poke/touch selection
+        if (usePokeSelection && pokedElementIndex >= 0 && pokedElementIndex < elementCount) {
+            if (Time.time - lastPokeTime > pokeDebounceTime) {
+                // Highlight and select the poked element
+                selectButton(pokedElementIndex);
+                ExecuteEvents.Execute(elements[pokedElementIndex].button.gameObject, pointer, ExecuteEvents.submitHandler);
+                lastPokeTime = Time.time;
             }
-            else if (!useOVRHand) {
-                try {
-                    bool joystickMoved = useGamepad && (Input.GetAxis("Horizontal") != 0.0 || Input.GetAxis("Vertical") != 0.0);
-                    if (!useGamepad || joystickMoved) {
-                        float rawAngleForFollower;
-                        if (!useGamepad)
-                            rawAngleForFollower = Mathf.Atan2(Input.mousePosition.y - rt.position.y, Input.mousePosition.x - rt.position.x) * Mathf.Rad2Deg;
-                        else
-                            rawAngleForFollower = Mathf.Atan2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal")) * Mathf.Rad2Deg;
-                        selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, rawAngleForFollower + 270);
-                    }
-                } catch {
-                    // Input System is active, skip legacy input
-                }
+        }
+
+        // Update selection follower
+        if (useSelectionFollower && selectionFollowerContainer != null && usePinchSelection) {
+            float handAngle = GetOVRHandAngle();
+            if (handAngle >= 0) {
+                selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, -handAngle + 90);
             }
+        }
+    }
 
-        } 
+    // Gets the index of the element being poked/touched by the finger tip
+    // Returns -1 if no element is being touched
+    private int GetPokedElementIndex() {
+        if (fingerTip == null) return -1;
 
+        for (int i = 0; i < elementCount; i++) {
+            if (elements[i] == null || elements[i].button == null) continue;
+
+            // Get the button's RectTransform
+            RectTransform buttonRect = elements[i].button.GetComponent<RectTransform>();
+            if (buttonRect == null) continue;
+
+            // Check distance from finger tip to button center
+            float distance = Vector3.Distance(fingerTip.position, buttonRect.position);
+            
+            if (distance < pokeDistance) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     // Gets the angle from the menu center to where the hand is, projected onto the menu plane

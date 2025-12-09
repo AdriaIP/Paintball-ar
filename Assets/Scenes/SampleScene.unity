@@ -378,6 +378,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 262810537}
     - target: {fileID: 11416056, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: fingerTip
+      value: 
+      objectReference: {fileID: 1037479979}
+    - target: {fileID: 11416056, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: handAnchor
       value: 
       objectReference: {fileID: 812211599}
@@ -400,6 +404,18 @@ PrefabInstance:
     - target: {fileID: 11416056, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: pinchThreshold
       value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11416056, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: useLazySelection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11416056, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: usePokeSelection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11416056, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: usePinchSelection
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11416056, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: elements.Array.size
@@ -1916,6 +1932,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1188642531}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1037479979 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8961160190102158576, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+  m_PrefabInstance: {fileID: 1749657871}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1132269249
 GameObject:
   m_ObjectHideFlags: 0
