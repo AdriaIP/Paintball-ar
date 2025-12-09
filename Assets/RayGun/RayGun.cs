@@ -17,6 +17,11 @@ public class RayGun : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip shootAudioClip;
 
+    private bool isPinching = false;
+    private LineRenderer currentLine;
+    private RaycastHit lastHit;
+    private bool hadHit = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -26,36 +31,67 @@ public class RayGun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (leftHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.3) {
+        bool currentlyPinching = leftHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.3f;
+
+        if (currentlyPinching)
+        {
+            // Show the line while pinching
+            ShowLine();
+            isPinching = true;
+        }
+        else if (isPinching && !currentlyPinching)
+        {
+            // Fire the shot
             Shoot();
+            isPinching = false;
         }
     }
 
-    public void Shoot() {
-        audioSource.PlayOneShot(shootAudioClip);
-
+    private void ShowLine()
+    {
         Ray ray = new Ray(shootingPoint.position, shootingPoint.forward);
-        bool hasHit = Physics.Raycast(ray, out RaycastHit hit, maxLineDistance, hitLayerMask);
+        hadHit = Physics.Raycast(ray, out lastHit, maxLineDistance, hitLayerMask);
 
-        Vector3 endPoint = Vector3.zero;
-
-        if (hasHit) {
-            // stop the ray at the hit point
-            endPoint = hit.point;
-
-            Quaternion rayImpactRotation = Quaternion.LookRotation(hit.normal);
-
-            GameObject rayImpact = Instantiate(rayImpactPrefab, hit.point, rayImpactRotation);
-        } else {
+        Vector3 endPoint;
+        if (hadHit)
+        {
+            endPoint = lastHit.point;
+        }
+        else
+        {
             endPoint = shootingPoint.position + shootingPoint.forward * maxLineDistance;
         }
 
-        LineRenderer line = Instantiate(linePrefab);
-        line.positionCount = 2;
-        line.SetPosition(0, shootingPoint.position);
+        // Create line if it doesn't exist
+        if (currentLine == null)
+        {
+            currentLine = Instantiate(linePrefab);
+            currentLine.positionCount = 2;
+        }
 
-        line.SetPosition(1, endPoint);
+        // Update line positions
+        currentLine.SetPosition(0, shootingPoint.position);
+        currentLine.SetPosition(1, endPoint);
+    }
 
-        Destroy(line.gameObject, lineShowDuration);
+    public void Shoot()
+    {
+        audioSource.PlayOneShot(shootAudioClip);
+
+        // Create object (target right now) if we hit something
+        if (hadHit)
+        {
+            Quaternion rayImpactRotation = Quaternion.LookRotation(lastHit.normal);
+            GameObject rayImpact = Instantiate(rayImpactPrefab, lastHit.point, rayImpactRotation);
+        }
+
+        // Destroy the line after a short duration (we keep it visible for a bit for a better effect)
+        if (currentLine != null)
+        {
+            Destroy(currentLine.gameObject, lineShowDuration);
+            currentLine = null;
+        }
+
+        hadHit = false;
     }
 }
