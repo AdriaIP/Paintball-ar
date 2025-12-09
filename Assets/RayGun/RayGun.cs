@@ -83,6 +83,9 @@ public class RayGun : MonoBehaviour
         {
             Quaternion rayImpactRotation = Quaternion.LookRotation(lastHit.normal);
             GameObject rayImpact = Instantiate(rayImpactPrefab, lastHit.point, rayImpactRotation);
+
+            // Move the impact object slightly away from the surface to avoid z-fighting
+            rayImpact.transform.position += lastHit.normal * 0.05f;
         }
 
         // Destroy the line after a short duration (we keep it visible for a bit for a better effect)
