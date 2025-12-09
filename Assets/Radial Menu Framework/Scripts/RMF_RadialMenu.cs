@@ -17,6 +17,22 @@ public class RMF_RadialMenu : MonoBehaviour {
     [Tooltip("Adjusts the radial menu for use with a gamepad or joystick. You might need to edit this script if you're not using the default horizontal and vertical input axes.")]
     public bool useGamepad = false;
 
+    [Tooltip("Enables OVR hand tracking for menu selection. Uses hand pointing direction and pinch to select.")]
+    public bool useOVRHand = false;
+
+    [Tooltip("Reference to the OVRHand component for hand tracking. Required if useOVRHand is enabled.")]
+    public OVRHand ovrHand;
+
+    [Tooltip("Reference to the hand anchor transform (e.g., RightHandAnchor or index finger tip). Used to calculate pointing direction.")]
+    public Transform handAnchor;
+
+    [Tooltip("The camera used for the radial menu (usually the VR camera/CenterEyeAnchor). Required for OVR hand input.")]
+    public Camera vrCamera;
+
+    [Tooltip("Pinch strength threshold for OVR hand selection (0-1). Default is 0.7.")]
+    [Range(0f, 1f)]
+    public float pinchThreshold = 0.7f;
+
     [Tooltip("With lazy selection, you only have to point your mouse (or joystick) in the direction of an element to select it, rather than be moused over the element entirely.")]
     public bool useLazySelection = true;
 
@@ -53,6 +69,9 @@ public class RMF_RadialMenu : MonoBehaviour {
 
     private PointerEventData pointer;
 
+    // OVR Hand tracking state
+    private bool wasPinching = false;
+
     void Awake() {
 
         pointer = new PointerEventData(EventSystem.current);
@@ -64,6 +83,15 @@ public class RMF_RadialMenu : MonoBehaviour {
 
         if (useSelectionFollower && selectionFollowerContainer == null)
             Debug.LogError("Radial Menu: Selection follower container is unassigned on " + gameObject.name + ", which has the selection follower enabled.");
+
+        if (useOVRHand && ovrHand == null)
+            Debug.LogError("Radial Menu: OVR Hand is enabled but ovrHand is not assigned on " + gameObject.name);
+
+        if (useOVRHand && handAnchor == null)
+            Debug.LogError("Radial Menu: OVR Hand is enabled but handAnchor is not assigned on " + gameObject.name);
+
+        if (useOVRHand && vrCamera == null)
+            Debug.LogError("Radial Menu: OVR Hand is enabled but vrCamera is not assigned on " + gameObject.name);
 
         elementCount = elements.Count;
 
@@ -100,24 +128,48 @@ public class RMF_RadialMenu : MonoBehaviour {
     // Update is called once per frame
     void Update() {
 
-        //If your gamepad uses different horizontal and vertical joystick inputs, change them here!
-        //==============================================================================================
-        bool joystickMoved = Input.GetAxis("Horizontal") != 0.0 || Input.GetAxis("Vertical") != 0.0;
-        //==============================================================================================
+        float rawAngle = 0f;
+        bool isPinching = false;
 
+        if (useOVRHand && ovrHand != null && handAnchor != null) {
+            // OVR Hand tracking mode - skip legacy input entirely
+            float handAngle = GetOVRHandAngle();
+            bool validAngle = handAngle >= 0;
+            
+            if (validAngle) {
+                currentAngle = normalizeAngle(handAngle - globalOffset + (angleOffset / 2f));
+            }
 
-        float rawAngle;
-        
-        if (!useGamepad)
-            rawAngle = Mathf.Atan2(Input.mousePosition.y - rt.position.y, Input.mousePosition.x - rt.position.x) * Mathf.Rad2Deg;
-        else
-            rawAngle = Mathf.Atan2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal")) * Mathf.Rad2Deg;
+            // Check for pinch gesture
+            isPinching = ovrHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > pinchThreshold;
+        }
+        else if (!useOVRHand) {
+            // Legacy input mode - only use when OVR hand is disabled
+            bool joystickMoved = false;
+            
+            try {
+                joystickMoved = Input.GetAxis("Horizontal") != 0.0 || Input.GetAxis("Vertical") != 0.0;
+            } catch {
+                // Input System is active, skip gamepad input
+            }
 
-        //If no gamepad, update the angle always. Otherwise, only update it if we've moved the joystick.
-        if (!useGamepad)
-            currentAngle = normalizeAngle(-rawAngle + 90 - globalOffset + (angleOffset / 2f));
-        else if (joystickMoved)
-            currentAngle = normalizeAngle(-rawAngle + 90 - globalOffset + (angleOffset / 2f));
+            if (!useGamepad) {
+                try {
+                    rawAngle = Mathf.Atan2(Input.mousePosition.y - rt.position.y, Input.mousePosition.x - rt.position.x) * Mathf.Rad2Deg;
+                    currentAngle = normalizeAngle(-rawAngle + 90 - globalOffset + (angleOffset / 2f));
+                } catch {
+                    // Input System is active, skip mouse input
+                }
+            }
+            else if (joystickMoved) {
+                try {
+                    rawAngle = Mathf.Atan2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal")) * Mathf.Rad2Deg;
+                    currentAngle = normalizeAngle(-rawAngle + 90 - globalOffset + (angleOffset / 2f));
+                } catch {
+                    // Input System is active, skip gamepad input
+                }
+            }
+        }
 
         //Handles lazy selection. Checks the current angle, matches it to the index of an element, and then highlights that element.
         if (angleOffset != 0 && useLazySelection) {
@@ -130,12 +182,22 @@ public class RMF_RadialMenu : MonoBehaviour {
                 //Select it.
                 selectButton(index);
 
-                //If we click or press a "submit" button (Button on joystick, enter, or spacebar), then we'll execut the OnClick() function for the button.
-                if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Submit")) {
-
-                    ExecuteEvents.Execute(elements[index].button.gameObject, pointer, ExecuteEvents.submitHandler);
-
-
+                //If we click or press a "submit" button (Button on joystick, enter, or spacebar), then we'll execute the OnClick() function for the button.
+                if (useOVRHand) {
+                    // For OVR hand: trigger on pinch release (like the RayGun behavior)
+                    if (wasPinching && !isPinching) {
+                        ExecuteEvents.Execute(elements[index].button.gameObject, pointer, ExecuteEvents.submitHandler);
+                    }
+                    wasPinching = isPinching;
+                }
+                else if (!useOVRHand) {
+                    try {
+                        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Submit")) {
+                            ExecuteEvents.Execute(elements[index].button.gameObject, pointer, ExecuteEvents.submitHandler);
+                        }
+                    } catch {
+                        // Input System is active, skip legacy input
+                    }
                 }
             }
 
@@ -143,12 +205,55 @@ public class RMF_RadialMenu : MonoBehaviour {
 
         //Updates the selection follower if we're using one.
         if (useSelectionFollower && selectionFollowerContainer != null) {
-            if (!useGamepad || joystickMoved)
-                selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, rawAngle + 270);
-           
+            if (useOVRHand) {
+                float handAngle = GetOVRHandAngle();
+                if (handAngle >= 0) {
+                    selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, -handAngle + 90);
+                }
+            }
+            else if (!useOVRHand) {
+                try {
+                    bool joystickMoved = useGamepad && (Input.GetAxis("Horizontal") != 0.0 || Input.GetAxis("Vertical") != 0.0);
+                    if (!useGamepad || joystickMoved) {
+                        float rawAngleForFollower;
+                        if (!useGamepad)
+                            rawAngleForFollower = Mathf.Atan2(Input.mousePosition.y - rt.position.y, Input.mousePosition.x - rt.position.x) * Mathf.Rad2Deg;
+                        else
+                            rawAngleForFollower = Mathf.Atan2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal")) * Mathf.Rad2Deg;
+                        selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, rawAngleForFollower + 270);
+                    }
+                } catch {
+                    // Input System is active, skip legacy input
+                }
+            }
 
         } 
 
+    }
+
+    // Gets the angle from the menu center to where the hand is, projected onto the menu plane
+    // Returns angle in degrees (0-360), or -1 if invalid
+    private float GetOVRHandAngle() {
+        if (handAnchor == null) return -1f;
+
+        // Get the vector from menu center to hand position
+        Vector3 centerToHand = handAnchor.position - transform.position;
+        
+        // Project onto the menu plane (perpendicular to the menu's forward direction)
+        Vector3 centerToHandProjected = Vector3.ProjectOnPlane(centerToHand, transform.forward);
+        
+        // If the projected vector is too small, hand is too close to center
+        if (centerToHandProjected.magnitude < 0.01f) return -1f;
+
+        // Calculate signed angle from menu's up direction
+        float angle = Vector3.SignedAngle(transform.up, centerToHandProjected, -transform.forward);
+        
+        // Convert to 0-360 range
+        if (angle < 0) {
+            angle += 360f;
+        }
+        
+        return angle;
     }
 
 
