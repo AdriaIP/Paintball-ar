@@ -38,7 +38,7 @@ public class HandPinch : MonoBehaviour
         velocity = (rightHandObject.transform.position - previousPosition) / Time.deltaTime;
         previousPosition = rightHandObject.transform.position;
 
-        Debug.Log(velocity);
+        //Debug.Log(velocity);
         if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.13)
         {
             isPinching = true;

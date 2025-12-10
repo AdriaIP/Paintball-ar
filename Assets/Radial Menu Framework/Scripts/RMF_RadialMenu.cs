@@ -56,6 +56,10 @@ public class RMF_RadialMenu : MonoBehaviour {
     [Tooltip("Controls the total angle offset for all elements. Good values are 0, 45, 90, or 180.")]
     public float globalOffset = 0f;
 
+    [Header("Initial Selection")]
+    [Tooltip("Reference to the RayGun to sync initial selection with currentPrefabIndex.")]
+    public RayGun rayGun;
+
     [HideInInspector]
     public float currentAngle = 0f;
 
@@ -116,6 +120,15 @@ public class RMF_RadialMenu : MonoBehaviour {
         // Initialize selection follower
         if (useSelectionFollower && selectionFollowerContainer != null)
             selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, -globalOffset);
+
+        // Highlight the initially selected element based on RayGun's currentPrefabIndex
+        if (rayGun != null && rayGun.currentPrefabIndex < elementCount && elementCount > 0) {
+            int initialIndex = rayGun.currentPrefabIndex;
+            if (elements[initialIndex] != null) {
+                elements[initialIndex].highlightThisElement(pointer);
+                previousActiveIndex = initialIndex;
+            }
+        }
     }
 
     // Update is called once per frame

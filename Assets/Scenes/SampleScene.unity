@@ -331,19 +331,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11405928, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 11405928, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 512770717}
+      objectReference: {fileID: 1849386071}
     - target: {fileID: 11405928, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetActive
+      value: SetRayImpactPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 11405928, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.GameObject, UnityEngine
+      value: RayGun, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405928, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11413884, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -369,6 +373,10 @@ PrefabInstance:
       propertyPath: m_FontData.m_FontSize
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 11416056, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: rayGun
+      value: 
+      objectReference: {fileID: 1849386071}
     - target: {fileID: 11416056, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: ovrHand
       value: 
@@ -441,6 +449,22 @@ PrefabInstance:
       propertyPath: m_FontData.m_FontSize
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 11446402, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1849386071}
+    - target: {fileID: 11446402, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetRayImpactPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 11446402, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: RayGun, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 11446402, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 11448210, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_Text
       value: Pot Blau
@@ -452,6 +476,38 @@ PrefabInstance:
     - target: {fileID: 11448210, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_FontData.m_FontSize
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 11471516, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1849386071}
+    - target: {fileID: 11471516, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetRayImpactPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 11471516, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: RayGun, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 11471516, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11474274, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1849386071}
+    - target: {fileID: 11474274, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetRayImpactPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 11474274, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: RayGun, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 11474274, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11498478, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_Text
@@ -2991,6 +3047,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7925367283838099837, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
   m_PrefabInstance: {fileID: 994721875853278877}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1849386071 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+  m_PrefabInstance: {fileID: 994721875853278877}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eaa9cd33d4bd4ea39f614c9d7a207f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &1967461268
 GameObject:
   m_ObjectHideFlags: 0
@@ -3226,6 +3293,46 @@ PrefabInstance:
       propertyPath: leftHandObject
       value: 
       objectReference: {fileID: 551341729}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: currentPrefabIndex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: rayImpactPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: 'rayImpactPrefabs.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1696193052755702717, guid: 7a66948ff00dc48e6a57a32acc411642, type: 3}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: 'rayImpactPrefabs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 3039710625354910236, guid: d601a6415a1684742909cf1c07ede5ab, type: 3}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: 'rayImpactPrefabs.Array.data[2]'
+      value: 
+      objectReference: {fileID: 701572712546209631, guid: c3e0922ef54414669acfe4d8a10b365b, type: 3}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: prefabRotationOffsets.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: prefabRotationOffsets.Array.data[1].x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: prefabRotationOffsets.Array.data[1].z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: prefabRotationOffsets.Array.data[2].x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: prefabRotationOffsets.Array.data[2].z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7401489109977168839, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
       propertyPath: m_Name
       value: RayGun

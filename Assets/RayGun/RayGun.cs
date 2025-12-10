@@ -8,7 +8,15 @@ public class RayGun : MonoBehaviour
     public GameObject leftHandObject;
     public LineRenderer linePrefab;
 
-    public GameObject rayImpactPrefab;
+    [Header("Ray Impact Prefabs")]
+    [Tooltip("List of available ray impact prefabs. Use SetRayImpactPrefab() to switch between them.")]
+    public GameObject[] rayImpactPrefabs;
+    
+    [Tooltip("Rotation offset for each prefab (in degrees). Use this to correct orientation issues. For objects facing +Z use (0,0,0), for objects facing +Y use (-90,0,0).")]
+    public Vector3[] prefabRotationOffsets;
+    
+    [Tooltip("Current ray impact prefab index.")]
+    public int currentPrefabIndex = 0;
 
     public Transform shootingPoint;
     public float maxLineDistance = 5;
@@ -21,6 +29,14 @@ public class RayGun : MonoBehaviour
     private LineRenderer currentLine;
     private RaycastHit lastHit;
     private bool hadHit = false;
+
+    // Property to get the current prefab
+    public GameObject CurrentRayImpactPrefab {
+        get {
+            if (rayImpactPrefabs == null || rayImpactPrefabs.Length == 0) return null;
+            return rayImpactPrefabs[Mathf.Clamp(currentPrefabIndex, 0, rayImpactPrefabs.Length - 1)];
+        }
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -45,6 +61,18 @@ public class RayGun : MonoBehaviour
             Shoot();
             isPinching = false;
         }
+    }
+
+    /// Sets the ray impact prefab by index. For example, it can be called from the radial menu buttons.
+    public void SetRayImpactPrefab(int index)
+    {
+        if (rayImpactPrefabs == null || rayImpactPrefabs.Length == 0)
+        {
+            Debug.LogWarning("RayGun: No ray impact prefabs assigned!");
+            return;
+        }
+        
+        currentPrefabIndex = Mathf.Clamp(index, 0, rayImpactPrefabs.Length - 1);
     }
 
     private void ShowLine()
@@ -79,10 +107,18 @@ public class RayGun : MonoBehaviour
         audioSource.PlayOneShot(shootAudioClip);
 
         // Create object (target right now) if we hit something
-        if (hadHit)
+        if (hadHit && CurrentRayImpactPrefab != null)
         {
+            // Base rotation: align object's forward (Z) with surface normal
             Quaternion rayImpactRotation = Quaternion.LookRotation(lastHit.normal);
-            GameObject rayImpact = Instantiate(rayImpactPrefab, lastHit.point, rayImpactRotation);
+            
+            // Apply per-prefab rotation offset if configured
+            if (prefabRotationOffsets != null && currentPrefabIndex < prefabRotationOffsets.Length)
+            {
+                rayImpactRotation *= Quaternion.Euler(prefabRotationOffsets[currentPrefabIndex]);
+            }
+            
+            GameObject rayImpact = Instantiate(CurrentRayImpactPrefab, lastHit.point, rayImpactRotation);
 
             // Move the impact object slightly away from the surface to avoid z-fighting
             rayImpact.transform.position += lastHit.normal * 0.05f;
