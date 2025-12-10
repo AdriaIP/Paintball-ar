@@ -494,12 +494,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11474274, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11474274, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1849386071}
     - target: {fileID: 11474274, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetRayImpactPrefab
+      value: EnableDeleteMode
       objectReference: {fileID: 0}
     - target: {fileID: 11474274, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -3294,8 +3298,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 551341729}
     - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: deleteModePrefab
+      value: 
+      objectReference: {fileID: 6051749367845802497, guid: 32985c3f47975484a8fe94c89679f35b, type: 3}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
       propertyPath: currentPrefabIndex
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: deletableLayer.m_Bits
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
       propertyPath: rayImpactPrefabs.Array.size
@@ -3314,8 +3326,28 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 701572712546209631, guid: c3e0922ef54414669acfe4d8a10b365b, type: 3}
     - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: deleteModePrefabRotationOffset.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: prefabPositionOffsets.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
       propertyPath: prefabRotationOffsets.Array.size
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: 'prefabPositionOffsets.Array.data[0]'
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: 'prefabPositionOffsets.Array.data[1]'
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: 'prefabPositionOffsets.Array.data[2]'
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
       propertyPath: prefabRotationOffsets.Array.data[1].x
