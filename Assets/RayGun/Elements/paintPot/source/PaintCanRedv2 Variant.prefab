@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PaintCanRedv2 Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4890588566618378380, guid: 3a53713e8b5134a29a85a024845fed8c, type: 3}
+      propertyPath: m_TagString
+      value: RedPaint
+      objectReference: {fileID: 0}
     - target: {fileID: 5230100626889787958, guid: 3a53713e8b5134a29a85a024845fed8c, type: 3}
       propertyPath: m_LocalScale.x
       value: 1

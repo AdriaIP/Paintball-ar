@@ -15,10 +15,11 @@ public class HandPinch : MonoBehaviour
     public float distance = 0.12f;
     Rigidbody b_Rigidbody;
     private Vector3 previousPosition;
-    public Vector3 velocity;
-    public Vector3 velocity2;
-    public Vector3 velocity3;
-    public Vector3 velocity4;
+    private Vector3 velocity;
+    private Vector3 velocity2;
+    private Vector3 velocity3;
+    private Vector3 velocity4;
+    public float offset;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -39,7 +40,7 @@ public class HandPinch : MonoBehaviour
         previousPosition = rightHandObject.transform.position;
 
         //Debug.Log(velocity);
-        if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.13)
+        if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.1)
         {
             isPinching = true;
 
@@ -63,7 +64,7 @@ public class HandPinch : MonoBehaviour
             }
 
 
-            ball.transform.position = rightHandObject.transform.position + rightHandObject.transform.forward * distance;
+            ball.transform.position = rightHandObject.transform.position + rightHandObject.transform.forward * distance + rightHandObject.transform.up * -offset;
         }
         else
         {

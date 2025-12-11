@@ -35,7 +35,7 @@ public class RayGun : MonoBehaviour
     public bool isDeleteMode = false;
 
     public Transform shootingPoint;
-    public float maxLineDistance = 5;
+    public float maxLineDistance = 20;
     public float lineShowDuration = 0.3f;
 
     public AudioSource audioSource;
@@ -63,7 +63,7 @@ public class RayGun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        bool currentlyPinching = leftHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.3f;
+        bool currentlyPinching = leftHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.2f;
 
         if (currentlyPinching)
         {

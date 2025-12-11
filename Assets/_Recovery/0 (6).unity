@@ -691,11 +691,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22455874, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.0025
+      value: 0.003
       objectReference: {fileID: 0}
     - target: {fileID: 22455874, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.0025
+      value: 0.003
       objectReference: {fileID: 0}
     - target: {fileID: 22455874, guid: 52364592654c8b140b7bce3e5d5fc7bd, type: 3}
       propertyPath: m_LocalScale.z
@@ -1405,7 +1405,6 @@ GameObject:
   - component: {fileID: 512770720}
   - component: {fileID: 512770719}
   - component: {fileID: 512770718}
-  - component: {fileID: 512770723}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -1486,7 +1485,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ad6b964deb00f7d418bd28f4421f4c4c, type: 2}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1532,19 +1531,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &512770723
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 512770717}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 828e6325d57ec1c4bb6dcad6347685e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  col: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &551341729
 GameObject:
   m_ObjectHideFlags: 0
@@ -2393,7 +2379,7 @@ MonoBehaviour:
   rightHandObject: {fileID: 812211598}
   ball: {fileID: 512770717}
   distance: 0.12
-  offset: 0.05
+  offset: 0
 --- !u!4 &1409113258
 Transform:
   m_ObjectHideFlags: 0
