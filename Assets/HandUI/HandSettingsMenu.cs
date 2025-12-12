@@ -9,21 +9,32 @@ using UnityEngine.Events;
 public class HandSettingsMenu : MonoBehaviour
 {
     [Header("UI References")]
-    public Toggle featureToggle;
+    public Toggle leftHandedToggle;
     public Slider valueSlider;
     public Text sliderValueText;
     
-    [Header("Events")]
-    [Tooltip("Called when toggle value changes.")]
-    public UnityEvent<bool> onToggleChanged;
+    [Header("References")]
+    [Tooltip("Reference to HandednessManager. If not set, will try to find it.")]
+    public HandednessManager handednessManager;
     
+    [Header("Events")]
     [Tooltip("Called when slider value changes.")]
     public UnityEvent<float> onSliderChanged;
     
     void Start()
     {
-        if (featureToggle != null)
-            featureToggle.onValueChanged.AddListener(OnToggleChanged);
+        // Find HandednessManager if not assigned
+        if (handednessManager == null)
+            handednessManager = FindFirstObjectByType<HandednessManager>();
+        
+        if (leftHandedToggle != null)
+        {
+            leftHandedToggle.onValueChanged.AddListener(OnLeftHandedToggleChanged);
+            
+            // Sync toggle with current handedness state
+            if (handednessManager != null)
+                leftHandedToggle.isOn = handednessManager.isLeftHandedMode;
+        }
         
         if (valueSlider != null)
         {
@@ -34,17 +45,25 @@ public class HandSettingsMenu : MonoBehaviour
     
     void OnDestroy()
     {
-        if (featureToggle != null)
-            featureToggle.onValueChanged.RemoveListener(OnToggleChanged);
+        if (leftHandedToggle != null)
+            leftHandedToggle.onValueChanged.RemoveListener(OnLeftHandedToggleChanged);
         
         if (valueSlider != null)
             valueSlider.onValueChanged.RemoveListener(OnSliderChanged);
     }
     
-    private void OnToggleChanged(bool isOn)
+    private void OnLeftHandedToggleChanged(bool isOn)
     {
-        Debug.Log($"Toggle changed: {isOn}");
-        onToggleChanged?.Invoke(isOn);
+        Debug.Log($"Left-handed mode toggle: {isOn}");
+        
+        if (handednessManager != null)
+        {
+            handednessManager.SetLeftHandedMode(isOn);
+        }
+        else
+        {
+            Debug.LogWarning("HandSettingsMenu: HandednessManager not found!");
+        }
     }
     
     private void OnSliderChanged(float value)

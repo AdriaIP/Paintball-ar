@@ -1268,6 +1268,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2144132489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &690021839
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 690021841}
+  - component: {fileID: 690021840}
+  m_Layer: 0
+  m_Name: HandednessManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &690021840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690021839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4630f4a3f6db74dd2ab1818479bcece5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandednessManager
+  leftHand: {fileID: 1229755176}
+  rightHand: {fileID: 1382080302}
+  leftHandAnchor: {fileID: 551341730}
+  rightHandAnchor: {fileID: 812211599}
+  leftHandObject: {fileID: 551341729}
+  rightHandObject: {fileID: 812211598}
+  handPinch: {fileID: 1409113257}
+  detachableRayGun: {fileID: 1953902082}
+  rayGun: {fileID: 1849386071}
+  isLeftHandedMode: 0
+  onHandednessChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &690021841
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690021839}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.44118, y: 0, z: 252.2336}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &778246931
 GameObject:
   m_ObjectHideFlags: 0
@@ -2391,12 +2448,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1101a728cbd234cdeb43130b340a9236, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HandSettingsMenu
-  featureToggle: {fileID: 1592221631}
+  leftHandedToggle: {fileID: 1592221631}
   valueSlider: {fileID: 1643681379}
   sliderValueText: {fileID: 0}
-  onToggleChanged:
-    m_PersistentCalls:
-      m_Calls: []
+  handednessManager: {fileID: 690021840}
   onSliderChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2550,7 +2605,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HandUIInteractor
   hand: {fileID: 1382080302}
   fingerTip: {fileID: 812211599}
-  pokeDistance: 0.08
+  pokeDistance: 0.06
   pokeDebounceTime: 0.5
   toggles:
   - {fileID: 1592221631}
@@ -2847,7 +2902,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.151, y: 0.0753}
+  m_AnchoredPosition: {x: 0.151, y: 0.068}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1592221631
@@ -3072,7 +3127,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.088, y: -0.08499999}
+  m_AnchoredPosition: {x: 0.088, y: -0.1025}
   m_SizeDelta: {x: 180, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1643681379
@@ -4466,3 +4521,4 @@ SceneRoots:
   - {fileID: 495565550}
   - {fileID: 994721875853278877}
   - {fileID: 1335728412}
+  - {fileID: 690021841}

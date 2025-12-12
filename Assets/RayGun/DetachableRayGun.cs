@@ -56,6 +56,9 @@ public class DetachableRayGun : MonoBehaviour
     [Tooltip("Is the ray gun currently attached to the hand?")]
     public bool isAttached = true;
     
+    [Tooltip("Set to true when using right hand (for mirrored rotation).")]
+    public bool isRightHand = false;
+    
     private Rigidbody rb;
     private bool wasGrabbing = false;
     private float attachTime = 0f;
@@ -96,9 +99,20 @@ public class DetachableRayGun : MonoBehaviour
         
         if (isAttached)
         {
-            // Follow the hand
-            transform.position = handAnchor.position + handAnchor.TransformDirection(attachedPositionOffset);
-            transform.rotation = handAnchor.rotation * Quaternion.Euler(attachedRotationOffset);
+            // Follow the hand with mirrored rotation for right hand
+            Vector3 posOffset = attachedPositionOffset;
+            Vector3 rotOffset = attachedRotationOffset;
+            
+            if (isRightHand)
+            {
+                // Mirror position on X axis and flip Y rotation for right hand
+                //posOffset.x = -posOffset.x;
+                //rotOffset.y = -rotOffset.y;
+                //rotOffset.z = -rotOffset.z;
+            }
+            
+            transform.position = handAnchor.position + handAnchor.TransformDirection(posOffset);
+            transform.rotation = handAnchor.rotation * Quaternion.Euler(rotOffset);
             
             // Check if hand opens wide to release (with delay to prevent accidental release)
             if (Time.time - attachTime > releaseDelay && IsHandWideOpen())
@@ -170,6 +184,7 @@ public class DetachableRayGun : MonoBehaviour
     {
         isAttached = true;
         attachTime = Time.time;
+        wasGrabbing = true; // Reset grab state to prevent immediate re-grab detection
         
         // Disable physics
         rb.isKinematic = true;
@@ -177,11 +192,23 @@ public class DetachableRayGun : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         
-        // Position at hand
+        // Position at hand with mirrored rotation for right hand
         if (handAnchor != null)
         {
-            transform.position = handAnchor.position + handAnchor.TransformDirection(attachedPositionOffset);
-            transform.rotation = handAnchor.rotation * Quaternion.Euler(attachedRotationOffset);
+            Vector3 posOffset = attachedPositionOffset;
+            Vector3 rotOffset = attachedRotationOffset;
+            
+            if (isRightHand)
+            {
+                // Mirror position on X axis and flip Y rotation for right hand
+                posOffset.x = -posOffset.x;
+                rotOffset.y = -rotOffset.y;
+                rotOffset.z = -rotOffset.z;
+            }
+            
+            transform.position = handAnchor.position + handAnchor.TransformDirection(posOffset);
+            transform.rotation = handAnchor.rotation * Quaternion.Euler(rotOffset);
+            previousHandPosition = handAnchor.position; // Reset velocity tracking
         }
         
         // Enable the RayGun functionality
@@ -218,5 +245,18 @@ public class DetachableRayGun : MonoBehaviour
         wasGrabbing = false;
         
         // Debug.Log("DetachableRayGun: Detached from hand");
+    }
+    
+    /// <summary>
+    /// Resets the grab detection state. Call this when swapping hands to allow
+    /// the new hand to grab the gun immediately.
+    /// </summary>
+    public void ResetGrabState()
+    {
+        wasGrabbing = false;
+        if (handAnchor != null)
+        {
+            previousHandPosition = handAnchor.position;
+        }
     }
 }
