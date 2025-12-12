@@ -40,7 +40,7 @@ public class HandPinch : MonoBehaviour
         previousPosition = rightHandObject.transform.position;
 
         //Debug.Log(velocity);
-        if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.1)
+        if (rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.8f)
         {
             isPinching = true;
 

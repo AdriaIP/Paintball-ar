@@ -35,11 +35,15 @@ public class RayGun : MonoBehaviour
     public bool isDeleteMode = false;
 
     public Transform shootingPoint;
-    public float maxLineDistance = 20;
+    public float maxLineDistance = 50;
     public float lineShowDuration = 0.3f;
 
     public AudioSource audioSource;
     public AudioClip shootAudioClip;
+
+    [Header("Detachable Settings")]
+    [Tooltip("If true, the ray gun will only respond to input when enabled. Use with DetachableRayGun.")]
+    public bool requireEnabled = true;
 
     private bool isPinching = false;
     private LineRenderer currentLine;
@@ -63,7 +67,10 @@ public class RayGun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        bool currentlyPinching = leftHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.2f;
+        // Don't process input if disabled (used by DetachableRayGun)
+        if (requireEnabled && !enabled) return;
+        
+        bool currentlyPinching = leftHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.8f;
 
         if (currentlyPinching)
         {
@@ -77,6 +84,18 @@ public class RayGun : MonoBehaviour
             Shoot();
             isPinching = false;
         }
+    }
+    
+    void OnDisable()
+    {
+        // Clean up any active line when disabled
+        if (currentLine != null)
+        {
+            Destroy(currentLine.gameObject);
+            currentLine = null;
+        }
+        isPinching = false;
+        hadHit = false;
     }
 
     /// Sets the ray impact prefab by index. For example, it can be called from the radial menu buttons.

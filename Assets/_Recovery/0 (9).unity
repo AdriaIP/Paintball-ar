@@ -2328,9 +2328,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DetachableRayGun
   hand: {fileID: 1229755176}
   handAnchor: {fileID: 551341730}
-  grabThreshold: 0.25
-  grabDistance: 0.4
-  openHandThreshold: 0.05
+  grabThreshold: 0.95
+  grabDistance: 0.05
+  openHandThreshold: 0.15
   attachedPositionOffset: {x: 0.14, y: 0, z: 0.15}
   attachedRotationOffset: {x: 90, y: 90, z: 5}
   releaseDelay: 0.5
