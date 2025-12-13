@@ -6,17 +6,24 @@ using TMPro;
 
 /// <summary>
 /// Allows hand tracking to interact with world-space UI elements (buttons, toggles, sliders).
-/// Uses the same poke detection approach as RMF_RadialMenu.
+/// Supports both left and right hand interaction simultaneously.
 /// Attach this to your menu canvas.
 /// </summary>
 public class HandUIInteractor : MonoBehaviour
 {
-    [Header("Hand References")]
-    [Tooltip("Reference to the OVRHand component.")]
-    public OVRHand hand;
+    [Header("Left Hand References")]
+    [Tooltip("Reference to the left OVRHand component.")]
+    public OVRHand leftHand;
     
-    [Tooltip("The index finger tip transform for poking UI elements.")]
-    public Transform fingerTip;
+    [Tooltip("The left index finger tip transform for poking UI elements.")]
+    public Transform leftFingerTip;
+    
+    [Header("Right Hand References")]
+    [Tooltip("Reference to the right OVRHand component.")]
+    public OVRHand rightHand;
+    
+    [Tooltip("The right index finger tip transform for poking UI elements.")]
+    public Transform rightFingerTip;
     
     [Header("Interaction Settings")]
     [Tooltip("How close the finger needs to be to interact with UI (in meters).")]
@@ -41,6 +48,7 @@ public class HandUIInteractor : MonoBehaviour
     private float lastPokeTime = 0f;
     private TMP_Dropdown activeDropdown = null;
     private Slider activeSlider = null;
+    private Transform activeFingerTip = null; // Which finger is currently interacting
     private PointerEventData pointer;
     
     void Start()
@@ -50,8 +58,6 @@ public class HandUIInteractor : MonoBehaviour
     
     void Update()
     {
-        if (fingerTip == null) return;
-        
         // PRIORITY 1: Handle active dropdown (blocks all other interactions)
         if (activeDropdown != null)
         {
@@ -66,20 +72,30 @@ public class HandUIInteractor : MonoBehaviour
             return;
         }
         
+        // Try interactions with both hands
+        TryInteractWithHand(leftFingerTip);
+        TryInteractWithHand(rightFingerTip);
+    }
+    
+    private void TryInteractWithHand(Transform fingerTip)
+    {
+        if (fingerTip == null) return;
+        
         // Check for dropdown open poke FIRST (before other UI elements)
-        int pokedDropdownIndex = GetPokedDropdownIndex();
+        int pokedDropdownIndex = GetPokedDropdownIndex(fingerTip);
         if (pokedDropdownIndex >= 0 && Time.time - lastPokeTime > pokeDebounceTime)
         {
             TMP_Dropdown dropdown = dropdowns[pokedDropdownIndex];
             dropdown.Show();
             activeDropdown = dropdown;
+            activeFingerTip = fingerTip;
             lastPokeTime = Time.time;
             Debug.Log($"HandUIInteractor: Opened dropdown '{dropdown.name}'");
             return;
         }
         
         // Check for toggle pokes
-        int pokedToggleIndex = GetPokedToggleIndex();
+        int pokedToggleIndex = GetPokedToggleIndex(fingerTip);
         if (pokedToggleIndex >= 0 && Time.time - lastPokeTime > pokeDebounceTime)
         {
             Toggle toggle = toggles[pokedToggleIndex];
@@ -90,7 +106,7 @@ public class HandUIInteractor : MonoBehaviour
         }
         
         // Check for button pokes
-        int pokedButtonIndex = GetPokedButtonIndex();
+        int pokedButtonIndex = GetPokedButtonIndex(fingerTip);
         if (pokedButtonIndex >= 0 && Time.time - lastPokeTime > pokeDebounceTime)
         {
             Button button = buttons[pokedButtonIndex];
@@ -101,10 +117,11 @@ public class HandUIInteractor : MonoBehaviour
         }
         
         // Check for slider touch (starts dragging)
-        int pokedSliderIndex = GetPokedSliderIndex();
+        int pokedSliderIndex = GetPokedSliderIndex(fingerTip);
         if (pokedSliderIndex >= 0)
         {
             activeSlider = sliders[pokedSliderIndex];
+            activeFingerTip = fingerTip;
             Debug.Log($"HandUIInteractor: Started dragging slider '{activeSlider.name}'");
             return;
         }
@@ -112,8 +129,13 @@ public class HandUIInteractor : MonoBehaviour
     
     private void HandleActiveDropdown()
     {
+        // Use whichever finger is closer to interact with the dropdown
+        Transform fingerTip = GetClosestFingerTip(activeDropdown.GetComponent<RectTransform>().position);
+        if (fingerTip == null) fingerTip = activeFingerTip;
+        if (fingerTip == null) return;
+        
         // Dropdown is open, ONLY check for option selection or closing
-        int selectedOption = GetPokedDropdownOption();
+        int selectedOption = GetPokedDropdownOption(fingerTip);
         if (selectedOption >= 0 && Time.time - lastPokeTime > pokeDebounceTime)
         {
             activeDropdown.value = selectedOption;
@@ -121,47 +143,80 @@ public class HandUIInteractor : MonoBehaviour
             lastPokeTime = Time.time;
             Debug.Log($"HandUIInteractor: Selected dropdown option {selectedOption}");
             activeDropdown = null;
+            activeFingerTip = null;
             return;
         }
         
-        // Check if finger moved far away to close dropdown
+        // Check if both fingers are far away to close dropdown
         RectTransform dropdownRect = activeDropdown.GetComponent<RectTransform>();
         if (dropdownRect != null)
         {
-            // Find the dropdown list to check distance from it
-            Transform dropdownList = activeDropdown.transform.Find("Dropdown List");
-            if (dropdownList != null)
+            float minDist = GetMinDistanceToDropdown(dropdownRect);
+            
+            // Only close if both hands are far from the dropdown
+            if (minDist > pokeDistance * 15f)
             {
-                RectTransform listRect = dropdownList.GetComponent<RectTransform>();
-                if (listRect != null)
-                {
-                    float distToList = Vector3.Distance(fingerTip.position, listRect.position);
-                    float distToDropdown = Vector3.Distance(fingerTip.position, dropdownRect.position);
-                    float minDist = Mathf.Min(distToList, distToDropdown);
-                    
-                    // Only close if far from both the dropdown and its list
-                    if (minDist > pokeDistance * 15f)
-                    {
-                        activeDropdown.Hide();
-                        activeDropdown = null;
-                        Debug.Log("HandUIInteractor: Closed dropdown (finger moved away)");
-                    }
-                }
-            }
-            else
-            {
-                // Dropdown list not found, use original dropdown distance check
-                float dist = Vector3.Distance(fingerTip.position, dropdownRect.position);
-                if (dist > pokeDistance * 10f)
-                {
-                    activeDropdown.Hide();
-                    activeDropdown = null;
-                }
+                activeDropdown.Hide();
+                activeDropdown = null;
+                activeFingerTip = null;
+                Debug.Log("HandUIInteractor: Closed dropdown (fingers moved away)");
             }
         }
     }
     
-    private int GetPokedToggleIndex()
+    private float GetMinDistanceToDropdown(RectTransform dropdownRect)
+    {
+        float minDist = float.MaxValue;
+        
+        // Find the dropdown list to check distance from it
+        Transform dropdownList = activeDropdown.transform.Find("Dropdown List");
+        
+        // Check left finger
+        if (leftFingerTip != null)
+        {
+            float distToDropdown = Vector3.Distance(leftFingerTip.position, dropdownRect.position);
+            if (dropdownList != null)
+            {
+                float distToList = Vector3.Distance(leftFingerTip.position, dropdownList.position);
+                minDist = Mathf.Min(minDist, distToDropdown, distToList);
+            }
+            else
+            {
+                minDist = Mathf.Min(minDist, distToDropdown);
+            }
+        }
+        
+        // Check right finger
+        if (rightFingerTip != null)
+        {
+            float distToDropdown = Vector3.Distance(rightFingerTip.position, dropdownRect.position);
+            if (dropdownList != null)
+            {
+                float distToList = Vector3.Distance(rightFingerTip.position, dropdownList.position);
+                minDist = Mathf.Min(minDist, distToDropdown, distToList);
+            }
+            else
+            {
+                minDist = Mathf.Min(minDist, distToDropdown);
+            }
+        }
+        
+        return minDist;
+    }
+    
+    private Transform GetClosestFingerTip(Vector3 position)
+    {
+        float leftDist = leftFingerTip != null ? Vector3.Distance(leftFingerTip.position, position) : float.MaxValue;
+        float rightDist = rightFingerTip != null ? Vector3.Distance(rightFingerTip.position, position) : float.MaxValue;
+        
+        if (leftDist < rightDist && leftFingerTip != null)
+            return leftFingerTip;
+        if (rightFingerTip != null)
+            return rightFingerTip;
+        return leftFingerTip;
+    }
+    
+    private int GetPokedToggleIndex(Transform fingerTip)
     {
         if (fingerTip == null) return -1;
         
@@ -189,7 +244,7 @@ public class HandUIInteractor : MonoBehaviour
         return -1;
     }
     
-    private int GetPokedButtonIndex()
+    private int GetPokedButtonIndex(Transform fingerTip)
     {
         if (fingerTip == null) return -1;
         
@@ -210,7 +265,7 @@ public class HandUIInteractor : MonoBehaviour
         return -1;
     }
     
-    private int GetPokedSliderIndex()
+    private int GetPokedSliderIndex(Transform fingerTip)
     {
         if (fingerTip == null) return -1;
         
@@ -246,23 +301,24 @@ public class HandUIInteractor : MonoBehaviour
     
     private void UpdateSliderDrag()
     {
-        if (activeSlider == null || fingerTip == null) return;
+        if (activeSlider == null || activeFingerTip == null) return;
         
         RectTransform sliderRect = activeSlider.GetComponent<RectTransform>();
         if (sliderRect == null) return;
         
         // Check if finger is still near the slider
-        float distanceToSlider = Vector3.Distance(fingerTip.position, sliderRect.position);
+        float distanceToSlider = Vector3.Distance(activeFingerTip.position, sliderRect.position);
         if (distanceToSlider > pokeDistance * 4f)
         {
             // Finger moved away, stop dragging
             Debug.Log($"HandUIInteractor: Stopped dragging slider '{activeSlider.name}'");
             activeSlider = null;
+            activeFingerTip = null;
             return;
         }
         
         // Convert finger position to local slider space
-        Vector3 localPoint = sliderRect.InverseTransformPoint(fingerTip.position);
+        Vector3 localPoint = sliderRect.InverseTransformPoint(activeFingerTip.position);
         
         // Calculate normalized position along the slider (assuming horizontal slider)
         float sliderWidth = sliderRect.rect.width;
@@ -273,7 +329,7 @@ public class HandUIInteractor : MonoBehaviour
         activeSlider.value = Mathf.Lerp(activeSlider.minValue, activeSlider.maxValue, normalizedX);
     }
     
-    private int GetPokedDropdownIndex()
+    private int GetPokedDropdownIndex(Transform fingerTip)
     {
         if (fingerTip == null) return -1;
         
@@ -294,7 +350,7 @@ public class HandUIInteractor : MonoBehaviour
         return -1;
     }
     
-    private int GetPokedDropdownOption()
+    private int GetPokedDropdownOption(Transform fingerTip)
     {
         if (fingerTip == null || activeDropdown == null) return -1;
         

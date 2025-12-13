@@ -764,7 +764,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 7.8999987, y: 0}
+  m_AnchoredPosition: {x: 9.499999, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &330585543
@@ -2713,7 +2713,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: 7.9, y: 0}
+  m_AnchoredPosition: {x: 9.5, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1121812049
@@ -3592,8 +3592,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a9e06946ac4c4fb8b3ff8e326e73a72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HandUIInteractor
-  hand: {fileID: 1382080302}
-  fingerTip: {fileID: 812211599}
+  leftHand: {fileID: 1229755176}
+  leftFingerTip: {fileID: 1559902295}
+  rightHand: {fileID: 1382080302}
+  rightFingerTip: {fileID: 1037479979}
   pokeDistance: 0.04
   pokeDebounceTime: 0.5
   toggles:
@@ -3968,6 +3970,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1552735988}
   m_CullTransparentMesh: 1
+--- !u!4 &1559902295 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5027277822492075676, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+  m_PrefabInstance: {fileID: 1749657871}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1592221629
 GameObject:
   m_ObjectHideFlags: 0
@@ -4283,9 +4290,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1005300952}
-        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-        m_MethodName: set_volume
+      - m_Target: {fileID: 1005300954}
+        m_TargetAssemblyTypeName: GenreMusicPlayer, Assembly-CSharp
+        m_MethodName: SetVolume
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4637,6 +4644,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1770652592}
     m_Modifications:
+    - target: {fileID: 1610028814, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 435407831072319256, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
       propertyPath: _leftEyeAnchor
       value: 
@@ -4713,10 +4724,18 @@ PrefabInstance:
       propertyPath: _playerOrigin
       value: 
       objectReference: {fileID: 1770652592}
+    - target: {fileID: 6147449420076126351, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6267690530596161800, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
       propertyPath: _ovrCameraRig
       value: 
       objectReference: {fileID: 1770652590}
+    - target: {fileID: 9170937211371257168, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5783,7 +5802,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: 2.9000015, y: 0}
+  m_AnchoredPosition: {x: 4.499999, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2064221475
