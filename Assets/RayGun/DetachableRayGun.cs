@@ -157,7 +157,7 @@ public class DetachableRayGun : MonoBehaviour
         float middlePinch = hand.GetFingerPinchStrength(OVRHand.HandFinger.Middle);
         
         // Debug log to see actual values
-        // Debug.Log($"Middle pinch: {middlePinch:F2}, Threshold: {grabThreshold:F2}");
+        // Debug.Log($"Middle pinch: {middlePinch:F2}, Index pinch: {indexPinch:F2}, Threshold: {grabThreshold:F2}");
 
         // Both main fingers must be closed (pinching)
         bool fingersClosed = indexPinch > grabThreshold && middlePinch > grabThreshold;
