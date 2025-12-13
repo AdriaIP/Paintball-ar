@@ -1,13 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// Tulip menu for the non-raygun hand. Uses long press gestures on different fingers:
 /// - Middle finger long press: Opens/closes the config menu
-/// - Ring finger long press: Resets ball color to first prefab
+/// - Ring finger long press: Resets sphere color to white
 /// - Pinky finger long press: Removes all objects from the DeletableObjects layer
 /// 
 /// Note: Index finger is reserved for ball grabbing (HandPinch).
 /// Automatically swaps hands when HandednessManager changes handedness.
+/// Shows visual feedback with text and loading bar while holding.
 /// </summary>
 public class TulipMenuActions : MonoBehaviour
 {
@@ -30,20 +33,36 @@ public class TulipMenuActions : MonoBehaviour
     [Tooltip("The config menu GameObject to show/hide.")]
     public GameObject configMenu;
     
-    [Tooltip("Reference to RayGun to reset ball color.")]
-    public RayGun rayGun;
+    [Tooltip("Reference to the Sphere object to reset color.")]
+    public GameObject sphere;
+    
+    [Tooltip("Default color for the sphere when reset.")]
+    public Color defaultSphereColor = Color.white;
     
     [Tooltip("Layer of deletable objects.")]
     public LayerMask deletableLayer;
     
-    [Header("Feedback")]
+    [Header("Visual Feedback UI")]
+    [Tooltip("Canvas for showing the loading feedback (should be world space, child of hand).")]
+    public Canvas feedbackCanvas;
+    
+    [Tooltip("Text to show the action name.")]
+    public TextMeshProUGUI actionText;
+    
+    [Tooltip("Image for the loading bar fill.")]
+    public Image loadingBarFill;
+    
+    [Tooltip("Background image for loading bar.")]
+    public Image loadingBarBackground;
+    
+    [Header("Audio Feedback")]
     [Tooltip("Audio source for feedback sounds.")]
     public AudioSource audioSource;
     
     [Tooltip("Sound to play when action is triggered.")]
     public AudioClip actionSound;
     
-    [Header("Visual Feedback")]
+    [Header("Debug")]
     [Tooltip("Show debug logs for long press progress.")]
     public bool showDebugLogs = false;
     
@@ -59,6 +78,15 @@ public class TulipMenuActions : MonoBehaviour
     private bool ringActionTriggered = false;
     private bool pinkyActionTriggered = false;
     
+    // Action names for display
+    private const string ACTION_CONFIG_MENU = "Toggle Menu";
+    private const string ACTION_RESET_COLOR = "Reset Color";
+    private const string ACTION_DELETE_ALL = "Delete All";
+    
+    // Track which action is currently being shown
+    private string currentActionName = "";
+    private float currentProgress = 0f;
+    
     void Start()
     {
         // Subscribe to handedness changes
@@ -72,6 +100,9 @@ public class TulipMenuActions : MonoBehaviour
             // Default: tulip menu on right hand (raygun on left)
             currentHand = rightHand;
         }
+        
+        // Hide feedback UI initially
+        HideFeedbackUI();
     }
     
     void OnDestroy()
@@ -86,22 +117,26 @@ public class TulipMenuActions : MonoBehaviour
     {
         if (currentHand == null) return;
         
+        // Reset visual feedback tracking
+        currentActionName = "";
+        currentProgress = 0f;
+        
         // Track middle finger (config menu)
         TrackFingerLongPress(
             OVRHand.HandFinger.Middle,
             ref middlePressTime,
             ref middleActionTriggered,
             ToggleConfigMenu,
-            "Config Menu"
+            ACTION_CONFIG_MENU
         );
         
-        // Track ring finger (reset ball color)
+        // Track ring finger (reset sphere color)
         TrackFingerLongPress(
             OVRHand.HandFinger.Ring,
             ref ringPressTime,
             ref ringActionTriggered,
-            ResetBallColor,
-            "Reset Ball Color"
+            ResetSphereColor,
+            ACTION_RESET_COLOR
         );
         
         // Track pinky finger (delete all objects)
@@ -110,8 +145,18 @@ public class TulipMenuActions : MonoBehaviour
             ref pinkyPressTime,
             ref pinkyActionTriggered,
             DeleteAllObjects,
-            "Delete All Objects"
+            ACTION_DELETE_ALL
         );
+        
+        // Update visual feedback
+        if (!string.IsNullOrEmpty(currentActionName) && currentProgress > 0.1f)
+        {
+            ShowFeedbackUI(currentActionName, currentProgress / longPressDuration);
+        }
+        else
+        {
+            HideFeedbackUI();
+        }
     }
     
     private void TrackFingerLongPress(
@@ -126,6 +171,13 @@ public class TulipMenuActions : MonoBehaviour
         if (pinchStrength > pinchThreshold)
         {
             pressTime += Time.deltaTime;
+            
+            // Track for visual feedback (use the highest progress action)
+            if (pressTime > currentProgress)
+            {
+                currentActionName = actionName;
+                currentProgress = pressTime;
+            }
             
             if (showDebugLogs && pressTime > 0.5f)
             {
@@ -146,6 +198,54 @@ public class TulipMenuActions : MonoBehaviour
             // Reset when finger is released
             pressTime = 0f;
             actionTriggered = false;
+        }
+    }
+    
+    private void ShowFeedbackUI(string actionName, float progress)
+    {
+        if (feedbackCanvas != null)
+        {
+            feedbackCanvas.gameObject.SetActive(true);
+        }
+        
+        if (actionText != null)
+        {
+            actionText.text = actionName;
+            actionText.gameObject.SetActive(true);
+        }
+        
+        if (loadingBarFill != null)
+        {
+            loadingBarFill.fillAmount = Mathf.Clamp01(progress);
+            loadingBarFill.gameObject.SetActive(true);
+        }
+        
+        if (loadingBarBackground != null)
+        {
+            loadingBarBackground.gameObject.SetActive(true);
+        }
+    }
+    
+    private void HideFeedbackUI()
+    {
+        if (feedbackCanvas != null)
+        {
+            feedbackCanvas.gameObject.SetActive(false);
+        }
+        
+        if (actionText != null)
+        {
+            actionText.gameObject.SetActive(false);
+        }
+        
+        if (loadingBarFill != null)
+        {
+            loadingBarFill.gameObject.SetActive(false);
+        }
+        
+        if (loadingBarBackground != null)
+        {
+            loadingBarBackground.gameObject.SetActive(false);
         }
     }
     
@@ -189,18 +289,26 @@ public class TulipMenuActions : MonoBehaviour
     }
     
     /// <summary>
-    /// Reset the ball color to the first prefab (index 0).
+    /// Reset the sphere color to default (white).
     /// </summary>
-    public void ResetBallColor()
+    public void ResetSphereColor()
     {
-        if (rayGun != null)
+        if (sphere != null)
         {
-            rayGun.SetRayImpactPrefab(0);
-            Debug.Log("TulipMenu: Ball color reset to default (prefab 0)");
+            Renderer renderer = sphere.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = defaultSphereColor;
+                Debug.Log($"TulipMenu: Sphere color reset to {defaultSphereColor}");
+            }
+            else
+            {
+                Debug.LogWarning("TulipMenu: Sphere has no Renderer component!");
+            }
         }
         else
         {
-            Debug.LogWarning("TulipMenu: RayGun not assigned!");
+            Debug.LogWarning("TulipMenu: Sphere not assigned!");
         }
     }
     
