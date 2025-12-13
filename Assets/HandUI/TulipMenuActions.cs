@@ -49,11 +49,14 @@ public class TulipMenuActions : MonoBehaviour
     [Tooltip("Text to show the action name.")]
     public TextMeshProUGUI actionText;
     
-    [Tooltip("Image for the loading bar fill.")]
+    [Tooltip("Image for the loading bar fill (white bar that grows).")]
     public Image loadingBarFill;
     
-    [Tooltip("Background image for loading bar.")]
+    [Tooltip("Background image for loading bar (black bar).")]
     public Image loadingBarBackground;
+    
+    [Tooltip("Time before showing the feedback UI (in seconds).")]
+    public float showDelay = 1f;
     
     [Header("Audio Feedback")]
     [Tooltip("Audio source for feedback sounds.")]
@@ -148,10 +151,12 @@ public class TulipMenuActions : MonoBehaviour
             ACTION_DELETE_ALL
         );
         
-        // Update visual feedback
-        if (!string.IsNullOrEmpty(currentActionName) && currentProgress > 0.1f)
+        // Update visual feedback - only show after showDelay seconds and if action not yet triggered
+        if (!string.IsNullOrEmpty(currentActionName) && currentProgress > showDelay && currentProgress < longPressDuration)
         {
-            ShowFeedbackUI(currentActionName, currentProgress / longPressDuration);
+            // Calculate progress excluding the show delay
+            float adjustedProgress = (currentProgress - showDelay) / (longPressDuration - showDelay);
+            ShowFeedbackUI(currentActionName, adjustedProgress);
         }
         else
         {
@@ -240,6 +245,7 @@ public class TulipMenuActions : MonoBehaviour
         
         if (loadingBarFill != null)
         {
+            loadingBarFill.fillAmount = 0f;
             loadingBarFill.gameObject.SetActive(false);
         }
         
