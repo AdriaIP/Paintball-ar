@@ -122,12 +122,50 @@ public class RMF_RadialMenu : MonoBehaviour {
             selectionFollowerContainer.rotation = Quaternion.Euler(0, 0, -globalOffset);
 
         // Highlight the initially selected element based on RayGun's currentPrefabIndex
-        if (rayGun != null && rayGun.currentPrefabIndex < elementCount && elementCount > 0) {
-            int initialIndex = rayGun.currentPrefabIndex;
-            if (elements[initialIndex] != null) {
-                elements[initialIndex].highlightThisElement(pointer);
-                previousActiveIndex = initialIndex;
+        SyncSelectionWithRayGun();
+    }
+
+    void OnEnable() {
+        // Re-sync selection when the menu becomes active (e.g., when raygun is grabbed)
+        // Use coroutine to delay until UI is fully ready
+        StartCoroutine(SyncSelectionDelayed());
+    }
+
+    private IEnumerator SyncSelectionDelayed() {
+        // Wait for end of frame to ensure UI is fully initialized
+        yield return null;
+        yield return null; // Extra frame for safety
+        SyncSelectionWithRayGun();
+    }
+
+    /// <summary>
+    /// Syncs the radial menu's visual selection with the RayGun's current prefab index.
+    /// Call this when the raygun state changes or when the menu becomes active.
+    /// </summary>
+    public void SyncSelectionWithRayGun() {
+        if (rayGun == null || elementCount <= 0) return;
+        
+        // Ensure pointer exists
+        if (pointer == null) {
+            pointer = new PointerEventData(EventSystem.current);
+        }
+        
+        int targetIndex = rayGun.currentPrefabIndex;
+        
+        // Handle delete mode - if there's a delete button, it might be at a specific index
+        // For now, just sync with the prefab index
+        if (targetIndex >= 0 && targetIndex < elementCount && elements[targetIndex] != null) {
+            // Unhighlight all elements first to ensure clean state
+            for (int i = 0; i < elementCount; i++) {
+                if (elements[i] != null) {
+                    elements[i].active = false;
+                    elements[i].unHighlightThisElement(pointer);
+                }
             }
+            
+            // Highlight current
+            elements[targetIndex].highlightThisElement(pointer);
+            previousActiveIndex = targetIndex;
         }
     }
 
