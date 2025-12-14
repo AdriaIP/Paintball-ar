@@ -1107,6 +1107,7 @@ GameObject:
   - component: {fileID: 512770719}
   - component: {fileID: 512770718}
   - component: {fileID: 512770723}
+  - component: {fileID: 512770724}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -1245,8 +1246,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca76e7e43f76741528f00ae253a309a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Collision
-  blue: {r: 0.20784314, g: 0.54901963, b: 0.65882355, a: 0}
+  blue: {r: 0.20784314, g: 0.54901963, b: 0.65882355, a: 1}
   red: {r: 0.7490196, g: 0.101960786, b: 0.101960786, a: 1}
+  ignoredTags:
+  - BluePaint
+  - RedPaint
+  - Player
+  - Ball
+  minImpactVelocity: 0.5
+  multiSplatOnHardImpact: 1
+  hardImpactVelocity: 300
+--- !u!114 &512770724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512770717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e47c3a7ebd03e43aa93f9263de870628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WetBall
+  maxHits: 5
+  dryColor: {r: 1, g: 1, b: 1, a: 1}
+  isWet: 0
+  currentPaintColor: {r: 0, g: 0, b: 0, a: 0}
+  remainingHits: 0
 --- !u!1 &551341729
 GameObject:
   m_ObjectHideFlags: 0
@@ -1877,6 +1903,78 @@ MonoBehaviour:
   autoPlay: 1
   loopPlaylist: 1
   volume: 1
+--- !u!1 &1031318948
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1031318951}
+  - component: {fileID: 1031318950}
+  - component: {fileID: 1031318949}
+  m_Layer: 0
+  m_Name: PaintSplatManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1031318949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031318948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 032cb61d90eda4f4db3f3889f73a91e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuntimeSplatTextureGenerator
+  textureSize: 128
+  textureCount: 3
+  targetManager: {fileID: 1031318950}
+--- !u!114 &1031318950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031318948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6ef64258f62940fdb3c1732f487e332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PaintSplatManager
+  splatPrefab: {fileID: 0}
+  baseSplatSize: 0.15
+  sizeVariation: 0.1
+  surfaceOffset: 0.008
+  useRaycastPositioning: 1
+  splatLayer: DeletableObjects
+  parentToHitObject: 1
+  maxSplats: 200
+  splatLifetime: 0
+  conformToEdges: 1
+  edgeDetectionDistance: 0.15
+  splatTextures: []
+--- !u!4 &1031318951
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031318948}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.16461, y: 0, z: 0.2062}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1037479979 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8961160190102158576, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
@@ -4048,3 +4146,4 @@ SceneRoots:
   - {fileID: 1005300953}
   - {fileID: 359127867}
   - {fileID: 1418866315}
+  - {fileID: 1031318951}
