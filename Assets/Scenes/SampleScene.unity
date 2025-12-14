@@ -1269,7 +1269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WetBall
   maxHits: 8
-  dryColor: {r: 1, g: 1, b: 1, a: 1}
+  dryColor: {r: 0.59607846, g: 0.57254905, b: 0.5529412, a: 1}
   isWet: 0
   currentPaintColor: {r: 0, g: 0, b: 0, a: 0}
   remainingHits: 0
@@ -1934,8 +1934,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RuntimeSplatTextureGenerator
   textureSize: 128
-  textureCount: 3
-  targetManager: {fileID: 0}
+  textureCount: 6
+  targetManager: {fileID: 1031318950}
 --- !u!114 &1031318950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1949,8 +1949,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaintSplatManager
   splatPrefab: {fileID: 0}
-  baseSplatSize: 0.12
-  sizeVariation: 0.1
+  baseSplatSize: 0.14
+  sizeVariation: 0.04
   surfaceOffset: 0.008
   useRaycastPositioning: 1
   splatLayer: DeletableObjects

@@ -8,7 +8,7 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
 {
     [Header("Generation Settings")]
     public int textureSize = 128;
-    public int textureCount = 3;
+    public int textureCount = 5;
     
     [Header("Auto-Assign to Manager")]
     public PaintSplatManager targetManager;
@@ -24,20 +24,15 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
         
         for (int i = 0; i < textureCount; i++)
         {
-            int type = i % 4;
+            // Alternate between Irregular and Splatter shapes
+            int type = i % 2;
             switch (type)
             {
                 case 0:
-                    textures[i] = GenerateCircleSplat(textureSize);
-                    break;
-                case 1:
                     textures[i] = GenerateIrregularSplat(textureSize, i * 12345);
                     break;
-                case 2:
-                    textures[i] = GenerateDripSplat(textureSize, i * 67890);
-                    break;
-                case 3:
-                    textures[i] = GenerateSplatterSplat(textureSize, i * 11111);
+                case 1:
+                    textures[i] = GenerateSplatterSplat(textureSize, i * 67890);
                     break;
             }
         }
@@ -95,16 +90,17 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
         
         Color[] pixels = new Color[size * size];
         Vector2 center = new Vector2(size / 2f, size / 2f);
-        float baseRadius = size / 2f * 0.8f;
+        float baseRadius = size / 3f * 0.75f; // Smaller to ensure it stays within circular bounds
+        float maxRadius = size / 2f * 0.95f; // Hard circular boundary
         
-        int numBumps = Random.Range(5, 10);
+        int numBumps = Random.Range(6, 12);
         float[] bumpAngles = new float[numBumps];
         float[] bumpAmounts = new float[numBumps];
         
         for (int i = 0; i < numBumps; i++)
         {
             bumpAngles[i] = Random.Range(0f, Mathf.PI * 2f);
-            bumpAmounts[i] = Random.Range(-0.3f, 0.4f);
+            bumpAmounts[i] = Random.Range(-0.2f, 0.25f); // Less extreme bumps
         }
         
         for (int y = 0; y < size; y++)
@@ -116,6 +112,7 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
                 float dist = toCenter.magnitude;
                 float angle = Mathf.Atan2(toCenter.y, toCenter.x);
                 
+                // Calculate irregular radius at this angle
                 float radiusAtAngle = baseRadius;
                 for (int i = 0; i < numBumps; i++)
                 {
@@ -124,55 +121,20 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
                     radiusAtAngle += baseRadius * bumpAmounts[i] * influence;
                 }
                 
+                // Clamp to circular boundary
+                radiusAtAngle = Mathf.Min(radiusAtAngle, maxRadius);
+                
+                // Circular falloff - outside maxRadius is always 0
+                float circularMask = 1f - Mathf.Clamp01((dist - maxRadius * 0.8f) / (maxRadius * 0.2f));
+                
                 float alpha = 1f - Mathf.Clamp01(dist / radiusAtAngle);
-                float noise = Mathf.PerlinNoise(x * 0.1f, y * 0.1f) * 0.3f;
-                alpha = Mathf.Clamp01(alpha + noise - 0.15f);
-                alpha = Mathf.Pow(alpha, 0.7f);
+                float noise = Mathf.PerlinNoise(x * 0.08f + seed, y * 0.08f) * 0.2f;
+                alpha = Mathf.Clamp01(alpha + noise - 0.1f);
+                alpha = Mathf.Pow(alpha, 0.5f);
                 
-                pixels[y * size + x] = new Color(1, 1, 1, alpha);
-            }
-        }
-        
-        tex.SetPixels(pixels);
-        tex.Apply();
-        Random.state = oldState;
-        return tex;
-    }
-    
-    private Texture2D GenerateDripSplat(int size, int seed)
-    {
-        Random.State oldState = Random.state;
-        Random.InitState(seed);
-        
-        Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
-        tex.filterMode = FilterMode.Bilinear;
-        tex.wrapMode = TextureWrapMode.Clamp;
-        
-        Color[] pixels = new Color[size * size];
-        Vector2 center = new Vector2(size / 2f, size / 3f);
-        float radius = size / 4f;
-        
-        for (int y = 0; y < size; y++)
-        {
-            for (int x = 0; x < size; x++)
-            {
-                float alpha = 0f;
+                // Apply circular mask
+                alpha *= circularMask;
                 
-                float dist = Vector2.Distance(new Vector2(x, y), center);
-                alpha = Mathf.Max(alpha, 1f - Mathf.Clamp01(dist / radius));
-                
-                if (y > center.y)
-                {
-                    float dripWidth = radius * 0.4f * (1f - (y - center.y) / (size - center.y));
-                    float xDist = Mathf.Abs(x - center.x);
-                    if (xDist < dripWidth)
-                    {
-                        float dripAlpha = (1f - xDist / dripWidth) * (1f - (y - center.y) / (size - center.y));
-                        alpha = Mathf.Max(alpha, dripAlpha * 0.8f);
-                    }
-                }
-                
-                alpha = Mathf.Pow(alpha, 0.6f);
                 pixels[y * size + x] = new Color(1, 1, 1, alpha);
             }
         }
@@ -194,21 +156,22 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
         
         Color[] pixels = new Color[size * size];
         
-        // Main blob
+        // Main blob - smaller to leave room for drops
         Vector2 center = new Vector2(size / 2f, size / 2f);
-        float mainRadius = size / 3f;
+        float mainRadius = size / 4f; // Smaller central blob (was size/3f)
+        float maxRadius = size / 2f * 0.95f; // Hard circular boundary
         
-        // Smaller satellite blobs
-        int blobCount = Random.Range(3, 6);
+        // Satellite blobs - more of them, spread out more
+        int blobCount = Random.Range(5, 8); // More droplets
         Vector2[] blobCenters = new Vector2[blobCount];
         float[] blobRadii = new float[blobCount];
         
         for (int i = 0; i < blobCount; i++)
         {
             float angle = Random.Range(0f, Mathf.PI * 2f);
-            float distance = Random.Range(mainRadius * 0.5f, mainRadius * 1.2f);
+            float distance = Random.Range(mainRadius * 0.8f, mainRadius * 2.2f); // Spread further out
             blobCenters[i] = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
-            blobRadii[i] = Random.Range(size * 0.05f, size * 0.15f);
+            blobRadii[i] = Random.Range(size * 0.055f, size * 0.075f); // Tighter size range
         }
         
         for (int y = 0; y < size; y++)
@@ -217,9 +180,13 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
             {
                 float alpha = 0f;
                 Vector2 pos = new Vector2(x, y);
+                float distFromCenter = Vector2.Distance(pos, center);
+                
+                // Circular mask - fade out near edges
+                float circularMask = 1f - Mathf.Clamp01((distFromCenter - maxRadius * 0.75f) / (maxRadius * 0.25f));
                 
                 // Main blob
-                float dist = Vector2.Distance(pos, center);
+                float dist = distFromCenter;
                 alpha = Mathf.Max(alpha, 1f - Mathf.Clamp01(dist / mainRadius));
                 
                 // Satellite blobs
@@ -231,9 +198,12 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
                 }
                 
                 // Noise
-                float noise = Mathf.PerlinNoise(x * 0.15f + seed, y * 0.15f) * 0.2f;
-                alpha = Mathf.Clamp01(alpha + noise - 0.1f);
-                alpha = Mathf.Pow(alpha, 0.6f);
+                float noise = Mathf.PerlinNoise(x * 0.12f + seed, y * 0.12f) * 0.15f;
+                alpha = Mathf.Clamp01(alpha + noise - 0.08f);
+                alpha = Mathf.Pow(alpha, 0.5f);
+                
+                // Apply circular mask
+                alpha *= circularMask;
                 
                 pixels[y * size + x] = new Color(1, 1, 1, alpha);
             }

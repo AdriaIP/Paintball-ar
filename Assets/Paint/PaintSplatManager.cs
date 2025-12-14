@@ -15,7 +15,7 @@ public class PaintSplatManager : MonoBehaviour
     
     [Header("Splat Settings")]
     [Tooltip("Base size of splats")]
-    public float baseSplatSize = 0.1f;
+    public float baseSplatSize = 0.08f;
     
     [Tooltip("Random size variation (±)")]
     public float sizeVariation = 0.03f;
@@ -101,14 +101,18 @@ public class PaintSplatManager : MonoBehaviour
         var collider = splat.GetComponent<Collider>();
         if (collider != null) Destroy(collider);
         
-        // Setup material - use URP Unlit for best AR mesh compatibility
+        // Setup material - use Alpha Cutout instead of Transparent to avoid passthrough bleed-through
         var renderer = splat.GetComponent<Renderer>();
         Material splatMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-        splatMat.SetFloat("_Surface", 1); // Transparent
-        splatMat.SetFloat("_Blend", 0); // Alpha blend
+        
+        // Use AlphaTest (Cutout) mode instead of Transparent
+        // This prevents passthrough camera feed from bleeding through
+        splatMat.SetFloat("_Surface", 0); // Opaque base
+        splatMat.SetFloat("_AlphaClip", 1); // Enable alpha clipping
+        splatMat.SetFloat("_Cutoff", 0.1f); // Alpha threshold (pixels below this are discarded)
         splatMat.SetFloat("_Cull", 0); // No culling (render both sides)
-        splatMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-        splatMat.renderQueue = 3100; // Higher than default transparent (3000) to render on top
+        splatMat.EnableKeyword("_ALPHATEST_ON");
+        splatMat.renderQueue = 2450; // AlphaTest queue (after opaque, before transparent)
         renderer.material = splatMat;
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;

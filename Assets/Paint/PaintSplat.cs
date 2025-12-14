@@ -26,10 +26,11 @@ public class PaintSplat : MonoBehaviour
             propertyBlock = new MaterialPropertyBlock();
         }
         
-        // Set color
+        // Set color (ensure full alpha for cutout rendering)
+        Color opaqueColor = new Color(color.r, color.g, color.b, 1f);
         splatRenderer.GetPropertyBlock(propertyBlock);
-        propertyBlock.SetColor("_BaseColor", color);
-        propertyBlock.SetColor("_Color", color);
+        propertyBlock.SetColor("_BaseColor", opaqueColor);
+        propertyBlock.SetColor("_Color", opaqueColor);
         
         // Set texture if provided
         if (texture != null)
@@ -62,7 +63,7 @@ public class PaintSplat : MonoBehaviour
     }
     
     /// <summary>
-    /// Fade out the splat over time
+    /// Fade out the splat over time (uses scale shrink since we use alpha cutout)
     /// </summary>
     public void FadeOut(float duration)
     {
@@ -72,17 +73,13 @@ public class PaintSplat : MonoBehaviour
     private System.Collections.IEnumerator FadeOutCoroutine(float duration)
     {
         float startTime = Time.time;
-        Color startColor = splatRenderer.material.color;
+        Vector3 startScale = transform.localScale;
         
         while (Time.time - startTime < duration)
         {
             float t = (Time.time - startTime) / duration;
-            Color newColor = startColor;
-            newColor.a = Mathf.Lerp(startColor.a, 0f, t);
-            
-            splatRenderer.GetPropertyBlock(propertyBlock);
-            propertyBlock.SetColor("_BaseColor", newColor);
-            splatRenderer.SetPropertyBlock(propertyBlock);
+            // Shrink the splat instead of fading alpha (works with cutout rendering)
+            transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
             
             yield return null;
         }
