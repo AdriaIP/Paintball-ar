@@ -8,7 +8,7 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
 {
     [Header("Generation Settings")]
     public int textureSize = 128;
-    public int textureCount = 5;
+    public int textureCount = 3;
     
     [Header("Auto-Assign to Manager")]
     public PaintSplatManager targetManager;
@@ -75,8 +75,7 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
                 float dist = Vector2.Distance(new Vector2(x, y), center);
                 float alpha = 1f - Mathf.Clamp01(dist / radius);
                 alpha = Mathf.Pow(alpha, 0.5f);
-                // Premultiplied alpha for proper transparency
-                pixels[y * size + x] = new Color(alpha, alpha, alpha, alpha);
+                pixels[y * size + x] = new Color(1, 1, 1, alpha);
             }
         }
         
@@ -130,8 +129,7 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
                 alpha = Mathf.Clamp01(alpha + noise - 0.15f);
                 alpha = Mathf.Pow(alpha, 0.7f);
                 
-                // Premultiplied alpha
-                pixels[y * size + x] = new Color(alpha, alpha, alpha, alpha);
+                pixels[y * size + x] = new Color(1, 1, 1, alpha);
             }
         }
         
@@ -175,8 +173,7 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
                 }
                 
                 alpha = Mathf.Pow(alpha, 0.6f);
-                // Premultiplied alpha
-                pixels[y * size + x] = new Color(alpha, alpha, alpha, alpha);
+                pixels[y * size + x] = new Color(1, 1, 1, alpha);
             }
         }
         
@@ -238,8 +235,7 @@ public class RuntimeSplatTextureGenerator : MonoBehaviour
                 alpha = Mathf.Clamp01(alpha + noise - 0.1f);
                 alpha = Mathf.Pow(alpha, 0.6f);
                 
-                // Premultiplied alpha
-                pixels[y * size + x] = new Color(alpha, alpha, alpha, alpha);
+                pixels[y * size + x] = new Color(1, 1, 1, alpha);
             }
         }
         

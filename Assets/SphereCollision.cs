@@ -8,7 +8,7 @@ public class SphereCollision : MonoBehaviour
 {
     [Header("Paint Colors")]
     [Tooltip("Make sure alpha is set to 1!")]
-    public Color blue = new Color(0.2f, 0.4f, 1f, 1f); // Bright blue with full alpha
+    public Color blue = new Color(0.2f, 0.4f, 1f, 1f); // Brighter blue with full alpha
     public Color red = new Color(1f, 0.2f, 0.2f, 1f);  // Bright red with full alpha
     
     [Header("Paint Trace Settings")]

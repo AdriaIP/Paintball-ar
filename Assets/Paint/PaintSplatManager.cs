@@ -101,20 +101,14 @@ public class PaintSplatManager : MonoBehaviour
         var collider = splat.GetComponent<Collider>();
         if (collider != null) Destroy(collider);
         
-        // Setup material with proper transparency
+        // Setup material - use URP Unlit for best AR mesh compatibility
         var renderer = splat.GetComponent<Renderer>();
         Material splatMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-        
-        // Configure for transparency
         splatMat.SetFloat("_Surface", 1); // Transparent
         splatMat.SetFloat("_Blend", 0); // Alpha blend
-        splatMat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        splatMat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        splatMat.SetFloat("_ZWrite", 0);
         splatMat.SetFloat("_Cull", 0); // No culling (render both sides)
         splatMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-        splatMat.renderQueue = 3100;
-        
+        splatMat.renderQueue = 3100; // Higher than default transparent (3000) to render on top
         renderer.material = splatMat;
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;
