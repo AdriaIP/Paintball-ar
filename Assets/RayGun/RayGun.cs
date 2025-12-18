@@ -70,7 +70,7 @@ public class RayGun : MonoBehaviour
         // Don't process input if disabled (used by DetachableRayGun)
         if (requireEnabled && !enabled) return;
         
-        bool currentlyPinching = leftHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.8f;
+        bool currentlyPinching = leftHand.GetFingerPinchStrength(OVRHand.HandFinger.Index) > 0.85f;
 
         if (currentlyPinching)
         {

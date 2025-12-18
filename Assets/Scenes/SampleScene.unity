@@ -1440,8 +1440,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TulipMenuActions
   leftHand: {fileID: 1229755176}
   rightHand: {fileID: 1382080302}
-  longPressDuration: 4
-  pinchThreshold: 0.7
+  longPressDuration: 3
+  pinchThreshold: 0.49
   configMenu: {fileID: 256856505}
   sphere: {fileID: 512770717}
   defaultSphereColor: {r: 1, g: 1, b: 1, a: 1}
@@ -2185,7 +2185,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: -0.35}
+  m_AnchoredPosition: {x: 0, y: -0.3}
   m_SizeDelta: {x: 0.2, y: 0.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1195100232
@@ -2600,7 +2600,7 @@ MonoBehaviour:
   leftFingerTip: {fileID: 1559902295}
   rightHand: {fileID: 1382080302}
   rightFingerTip: {fileID: 1037479979}
-  pokeDistance: 0.04
+  pokeDistance: 0.2
   pokeDebounceTime: 0.5
   toggles:
   - {fileID: 1592221631}
@@ -3475,9 +3475,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DetachableRayGun
   hand: {fileID: 1229755176}
   handAnchor: {fileID: 551341730}
-  grabThreshold: 0.25
+  grabThreshold: 0.385
   grabDistance: 0.2
-  openHandThreshold: 0.05
+  openHandThreshold: 0.00003
   attachedPositionOffset: {x: 0.14, y: 0, z: 0.15}
   attachedRotationOffset: {x: 90, y: 90, z: 5}
   releaseDelay: 0.5
@@ -3711,6 +3711,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4668162899540541175, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
+      propertyPath: Pan2D
+      value: 0.32
+      objectReference: {fileID: 0}
     - target: {fileID: 5732508808262738884, guid: 16cb4dad5f680420ea36bcf6aecb5d3e, type: 3}
       propertyPath: leftHand
       value: 
