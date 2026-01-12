@@ -1253,7 +1253,7 @@ MonoBehaviour:
   - RedPaint
   - Player
   - Ball
-  minImpactVelocity: 0.5
+  minImpactVelocity: 0.11
   multiSplatOnHardImpact: 1
   hardImpactVelocity: 300
 --- !u!114 &512770724
@@ -1949,6 +1949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaintSplatManager
   splatPrefab: {fileID: 0}
+  splatMaterialTemplate: {fileID: 2100000, guid: fde6e9277115cd84fbe8cb8c565d0107, type: 2}
   baseSplatSize: 0.14
   sizeVariation: 0.04
   surfaceOffset: 0.008

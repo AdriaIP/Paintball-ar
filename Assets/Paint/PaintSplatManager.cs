@@ -12,7 +12,11 @@ public class PaintSplatManager : MonoBehaviour
     [Header("Splat Prefab")]
     [Tooltip("Prefab for paint splat (quad with PaintSplat component)")]
     public GameObject splatPrefab;
-    
+
+    [Header("Render Settings")]
+    [Tooltip("Assign the 'SplatTemplate' material here. Must have Alpha Clipping enabled!")]
+    public Material splatMaterialTemplate;
+
     [Header("Splat Settings")]
     [Tooltip("Base size of splats")]
     public float baseSplatSize = 0.08f;
@@ -103,22 +107,35 @@ public class PaintSplatManager : MonoBehaviour
         
         // Setup material - use Alpha Cutout instead of Transparent to avoid passthrough bleed-through
         var renderer = splat.GetComponent<Renderer>();
-        Material splatMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+
+        if (splatMaterialTemplate != null)
+        {
+            // Instantiate the template material which effectively clones its settings (Shader + Keywords)
+            renderer.material = new Material(splatMaterialTemplate);
+        }
+        else
+        {
+            // Fallback (Not recommended for Builds)
+            Material splatMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
         
-        // Use AlphaTest (Cutout) mode instead of Transparent
-        // This prevents passthrough camera feed from bleeding through
-        splatMat.SetFloat("_Surface", 0); // Opaque base
-        splatMat.SetFloat("_AlphaClip", 1); // Enable alpha clipping
-        splatMat.SetFloat("_Cutoff", 0.1f); // Alpha threshold (pixels below this are discarded)
-        splatMat.SetFloat("_Cull", 0); // No culling (render both sides)
-        splatMat.EnableKeyword("_ALPHATEST_ON");
-        splatMat.renderQueue = 2450; // AlphaTest queue (after opaque, before transparent)
-        renderer.material = splatMat;
+            // Use AlphaTest (Cutout) mode instead of Transparent
+            // This prevents passthrough camera feed from bleeding through
+            splatMat.SetFloat("_Surface", 0); // Opaque base
+            splatMat.SetFloat("_AlphaClip", 1); // Enable alpha clipping
+            splatMat.SetFloat("_Cutoff", 0.1f); // Alpha threshold (pixels below this are discarded)
+            splatMat.SetFloat("_Cull", 0); // No culling (render both sides)
+            splatMat.EnableKeyword("_ALPHATEST_ON");
+            splatMat.renderQueue = 2450; // AlphaTest queue (after opaque, before transparent)
+            renderer.material = splatMat;
+
+        }
+
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;
-        
+
         // Add PaintSplat component
-        splat.AddComponent<PaintSplat>();
+        if (splat.GetComponent<PaintSplat>() == null)
+            splat.AddComponent<PaintSplat>();
         
         return splat;
     }
@@ -222,14 +239,18 @@ public class PaintSplatManager : MonoBehaviour
             {
                 tex = splatTextures[Random.Range(0, splatTextures.Length)];
             }
+            // Ensure Initialize is called
             paintSplat.Initialize(color, tex, splatLifetime);
         }
         else
         {
-            var renderer = splat.GetComponent<Renderer>();
-            if (renderer != null)
+            // Fallback if PaintSplat component missing
+            var r = splat.GetComponent<Renderer>();
+            if (r != null)
             {
-                renderer.material.color = color;
+                r.material.color = color;
+                if (splatTextures != null && splatTextures.Length > 0)
+                    r.material.mainTexture = splatTextures[Random.Range(0, splatTextures.Length)];
             }
         }
         
