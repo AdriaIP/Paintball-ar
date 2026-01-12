@@ -289,7 +289,7 @@ public class HandUIInteractor : MonoBehaviour
             if (sliderRect != null)
             {
                 float distanceToSlider = Vector3.Distance(fingerTip.position, sliderRect.position);
-                if (distanceToSlider < pokeDistance * 2f)
+                if (distanceToSlider < pokeDistance * 1f)
                 {
                     return i;
                 }

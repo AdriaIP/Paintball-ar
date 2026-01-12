@@ -302,6 +302,7 @@ public class TulipMenuActions : MonoBehaviour
         if (sphere != null)
         {
             Renderer renderer = sphere.GetComponent<Renderer>();
+            sphere.GetComponent<WetBall>().MakeDry();
             if (renderer != null)
             {
                 renderer.material.color = defaultSphereColor;

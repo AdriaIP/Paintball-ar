@@ -1898,7 +1898,7 @@ MonoBehaviour:
     songs:
     - {fileID: 8300000, guid: 5ae15f74351c646c4ae590281a7432b8, type: 3}
     - {fileID: 8300000, guid: 61ae7c3b3ed1848689e2096021095524, type: 3}
-  currentGenreIndex: 1
+  currentGenreIndex: 0
   shuffleMode: 0
   autoPlay: 1
   loopPlaylist: 1

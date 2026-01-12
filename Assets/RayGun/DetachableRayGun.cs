@@ -82,7 +82,7 @@ public class DetachableRayGun : MonoBehaviour
         }
         else
         {
-            DetachFromHand();
+            //DetachFromHand();
         }
         
         if (handAnchor != null)
@@ -106,9 +106,9 @@ public class DetachableRayGun : MonoBehaviour
             if (isRightHand)
             {
                 // Mirror position on X axis and flip Y rotation for right hand
-                //posOffset.x = -posOffset.x;
+                posOffset.x = -posOffset.x;
                 //rotOffset.y = -rotOffset.y;
-                //rotOffset.z = -rotOffset.z;
+                rotOffset.x = -rotOffset.x;
             }
             
             transform.position = handAnchor.position + handAnchor.TransformDirection(posOffset);
@@ -117,7 +117,7 @@ public class DetachableRayGun : MonoBehaviour
             // Check if hand opens wide to release (with delay to prevent accidental release)
             if (Time.time - attachTime > releaseDelay && IsHandWideOpen())
             {
-                DetachFromHand();
+                //DetachFromHand();
             }
         }
         else
