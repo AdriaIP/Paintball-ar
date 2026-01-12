@@ -12,6 +12,7 @@ public class HandSettingsMenu : MonoBehaviour
 {
     [Header("UI References")]
     public Toggle leftHandedToggle;
+    public Toggle sceneMeshToggle;
     public Slider valueSlider;
     public Text sliderValueText;
     public TMP_Dropdown dropdown;
@@ -55,7 +56,12 @@ public class HandSettingsMenu : MonoBehaviour
             if (handednessManager != null)
                 leftHandedToggle.isOn = handednessManager.isLeftHandedMode;
         }
-        
+
+        if (sceneMeshToggle != null)
+        {
+            sceneMeshToggle.onValueChanged.AddListener(OnSceneMeshToggleChanged);
+        }
+
         if (valueSlider != null)
         {
             valueSlider.onValueChanged.AddListener(OnSliderChanged);
@@ -74,7 +80,10 @@ public class HandSettingsMenu : MonoBehaviour
     {
         if (leftHandedToggle != null)
             leftHandedToggle.onValueChanged.RemoveListener(OnLeftHandedToggleChanged);
-        
+
+        if (sceneMeshToggle != null)
+            sceneMeshToggle.onValueChanged.RemoveListener(OnSceneMeshToggleChanged);
+
         if (valueSlider != null)
             valueSlider.onValueChanged.RemoveListener(OnSliderChanged);
         
@@ -147,7 +156,13 @@ public class HandSettingsMenu : MonoBehaviour
             Debug.LogWarning("HandSettingsMenu: HandednessManager not found!");
         }
     }
-    
+
+    private void OnSceneMeshToggleChanged(bool isOn)
+    {
+        Debug.Log($"Scene mesh toggle: {isOn}");
+        ToggleShowSceneMesh();
+    }
+
     private void OnSliderChanged(float value)
     {
         UpdateSliderText(value);
@@ -174,5 +189,14 @@ public class HandSettingsMenu : MonoBehaviour
     {
         if (sliderValueText != null)
             sliderValueText.text = value.ToString("F1");
+    }
+
+    public void ToggleShowSceneMesh()
+    {
+        var sceneMeshes = GameObject.FindGameObjectsWithTag("mesh");
+        foreach (var mesh in sceneMeshes)
+        {
+            mesh.gameObject.SetActive(!mesh.gameObject.activeSelf);
+        }
     }
 }

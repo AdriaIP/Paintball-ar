@@ -6,6 +6,7 @@ TagManager:
   tags:
   - BluePaint
   - RedPaint
+  - mesh
   layers:
   - Default
   - TransparentFX

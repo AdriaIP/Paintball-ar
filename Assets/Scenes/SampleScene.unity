@@ -1993,6 +1993,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TMP_Dropdown
+--- !u!114 &1119427341 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+  m_PrefabInstance: {fileID: 7032883053384500210}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Toggle
 --- !u!1 &1132269249
 GameObject:
   m_ObjectHideFlags: 0
@@ -2525,6 +2536,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2794957947414314697, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
   m_PrefabInstance: {fileID: 7032883053384500210}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1335728413 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5155118020885569013, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+  m_PrefabInstance: {fileID: 7032883053384500210}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256856505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1101a728cbd234cdeb43130b340a9236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandSettingsMenu
 --- !u!114 &1382080302 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2032031666409119128, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
@@ -4082,6 +4104,46 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1335728413}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleShowSceneMesh
+      objectReference: {fileID: 0}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: HandSettingsMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3838574475009197183, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4084786572317330400, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -4102,6 +4164,10 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 1005300954}
+    - target: {fileID: 5155118020885569013, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: sceneMeshToggle
+      value: 
+      objectReference: {fileID: 1119427341}
     - target: {fileID: 5155118020885569013, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: handednessManager
       value: 
