@@ -2,9 +2,6 @@ using Meta.WitAi;
 using System;
 using UnityEngine;
 
-
-
-
 public class HandPinch : MonoBehaviour
 {
     public OVRHand rightHand;
@@ -44,37 +41,24 @@ public class HandPinch : MonoBehaviour
         {
             isPinching = true;
 
-            //if (!wasPinching)
-            //{
-            //    b_Rigidbody.useGravity = false;
-            //    b_Rigidbody.linearVelocity = Vector3.zero;
-            //    b_Rigidbody.MovePosition(rightHandObject.transform.position + rightHandObject.transform.forward * distance);
-
-            //    FixedJoint fixedJoint = ball.AddComponent<FixedJoint>();
-            //    fixedJoint.connectedBody = rightHandObject.GetComponent<Rigidbody>();
-            //}
-
-            //Debug.Log("pinching");
-            //Vector3 obj_velocity = (lastPosition - rightHandObject.transform.position) * Time.deltaTime;
             if (!wasPinching)
             {
                 b_Rigidbody.useGravity = false;
-                b_Rigidbody.MovePosition(rightHandObject.transform.position + rightHandObject.transform.forward * distance);
+                //b_Rigidbody.isKinematic = true; // Disable physics interactions while holding
                 b_Rigidbody.linearVelocity = Vector3.zero;
             }
 
-
-            ball.transform.position = rightHandObject.transform.position + rightHandObject.transform.forward * distance + rightHandObject.transform.up * -offset;
+            // Use MovePosition instead of transform.position to prevent tunneling through walls
+            b_Rigidbody.MovePosition(rightHandObject.transform.position + rightHandObject.transform.forward * distance + rightHandObject.transform.up * -offset);
         }
         else
         {
             isPinching = false;
             if (wasPinching)
             {
-
+                //b_Rigidbody.isKinematic = false; // Re-enable physics interactions on release
                 b_Rigidbody.linearVelocity = (velocity + velocity2 + velocity3) / 2;
                 b_Rigidbody.useGravity = true;
-
             }
         }
         wasPinching = isPinching;

@@ -1141,7 +1141,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!135 &512770719
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1896,8 +1896,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 79d55ce2d97b449ccb352ea8fb1fb42c, type: 3}
   - genreName: "Cl\xE0ssica"
     songs:
-    - {fileID: 8300000, guid: 5ae15f74351c646c4ae590281a7432b8, type: 3}
-    - {fileID: 8300000, guid: 61ae7c3b3ed1848689e2096021095524, type: 3}
+    - {fileID: 8300000, guid: e9f6d2e1eb2b477429e1cf99655cb709, type: 3}
+    - {fileID: 8300000, guid: e74ea3c114fa2a44694bae86557f7a4a, type: 3}
   currentGenreIndex: 1
   shuffleMode: 0
   autoPlay: 1
@@ -4067,7 +4067,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2794957947414314697, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.5
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: 2794957947414314697, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4091,7 +4091,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2794957947414314697, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.02
       objectReference: {fileID: 0}
     - target: {fileID: 2794957947414314697, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
