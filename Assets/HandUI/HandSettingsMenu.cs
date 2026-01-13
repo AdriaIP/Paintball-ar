@@ -196,7 +196,12 @@ public class HandSettingsMenu : MonoBehaviour
         var sceneMeshes = GameObject.FindGameObjectsWithTag("mesh");
         foreach (var mesh in sceneMeshes)
         {
-            mesh.gameObject.SetActive(!mesh.gameObject.activeSelf);
+            MeshRenderer renderer = mesh.GetComponent<MeshRenderer>();
+            if (renderer != null)
+            {
+                // Hide the mesh
+                renderer.enabled = sceneMeshToggle.isOn;
+            }
         }
     }
 }

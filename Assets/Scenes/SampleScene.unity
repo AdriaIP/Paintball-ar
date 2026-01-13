@@ -2628,6 +2628,7 @@ MonoBehaviour:
   pokeDebounceTime: 0.5
   toggles:
   - {fileID: 1592221631}
+  - {fileID: 1119427341}
   buttons: []
   sliders:
   - {fileID: 1643681379}
@@ -3052,7 +3053,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a07d5d10251915478347131c5a6ebe8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _meshPrefab: {fileID: 8999845180316542267, guid: 2d6ac3b9dfc2b44458e32bd44afc2cfa, type: 3}
+  _meshPrefab: {fileID: 8999845180316542267, guid: d84ebb861b439464da30dda42e14f225, type: 3}
 --- !u!114 &1758082345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4054,7 +4055,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2794957947414314697, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0.5
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 2794957947414314697, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4169,9 +4170,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1119427341}
     - target: {fileID: 5155118020885569013, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: visibleMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: be1340ae6593bfa46888d2c5b6179e2c, type: 2}
+    - target: {fileID: 5155118020885569013, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: handednessManager
       value: 
       objectReference: {fileID: 690021840}
+    - target: {fileID: 5155118020885569013, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
+      propertyPath: occlusionMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: ccf589b723c074315bad425b4e7654cf, type: 2}
     - target: {fileID: 6055837685524338305, guid: a7b56f2fc8a164ea7bdc7fbef5d85119, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
