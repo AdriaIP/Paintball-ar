@@ -1896,8 +1896,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 79d55ce2d97b449ccb352ea8fb1fb42c, type: 3}
   - genreName: "Cl\xE0ssica"
     songs:
-    - {fileID: 8300000, guid: e9f6d2e1eb2b477429e1cf99655cb709, type: 3}
-    - {fileID: 8300000, guid: e74ea3c114fa2a44694bae86557f7a4a, type: 3}
+    - {fileID: 8300000, guid: 5ae15f74351c646c4ae590281a7432b8, type: 3}
+    - {fileID: 8300000, guid: 61ae7c3b3ed1848689e2096021095524, type: 3}
   currentGenreIndex: 1
   shuffleMode: 0
   autoPlay: 1
